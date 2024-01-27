@@ -17,9 +17,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     importProvidersFrom(
-      provideFirebaseApp(() =>
-        initializeApp(environment.firebaseConfig),
-      ),
+      provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     ),
     importProvidersFrom(provideAuth(() => getAuth())),
     importProvidersFrom(provideAnalytics(() => getAnalytics())),
