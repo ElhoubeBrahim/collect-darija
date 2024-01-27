@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "collect-darija": {
+      "hosting": {
+        "collect-darija": [
+          "collect-darija"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "collect-darija"
+  }
+}
