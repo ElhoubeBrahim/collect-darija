@@ -4,6 +4,9 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "remixicon/fonts/remixicon.css";
+@import "ngx-toastr/toastr";
+
 body {
   @apply text-text;
 }

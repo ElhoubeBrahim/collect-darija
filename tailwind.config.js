@@ -13,6 +13,10 @@ module.exports = {
         sans: ["IBM Plex Sans", "sans-serif"],
       },
     },
+    container: {
+      center: true,
+      padding: "2rem",
+    },
   },
   plugins: [],
 };

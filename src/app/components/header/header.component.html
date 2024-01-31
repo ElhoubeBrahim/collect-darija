@@ -1,0 +1,19 @@
+<header class="border-b shadow-sm">
+  <div class="container py-4">
+    <div class="flex items-center justify-between">
+      <a routerLink="/" class="cursor-pointer">
+        <img src="assets/logo.svg" alt="Collect Darija" class="h-[40px]" />
+      </a>
+      <div class="flex items-center gap-4">
+        <i class="ri-information-2-line ri-lg cursor-pointer"></i>
+        @if (user$ | async; as user) {
+          <img
+            src="{{ user.picture }}"
+            alt="User avatar"
+            class="w-[40px] h-[40px] rounded-full border"
+          />
+        }
+      </div>
+    </div>
+  </div>
+</header>

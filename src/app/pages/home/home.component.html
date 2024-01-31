@@ -1,0 +1,7 @@
+<h1>Welcome to Collect Darija</h1>
+
+@if (user$ | async; as user) {
+  <p>{{ user.username }}</p>
+}
+
+<button (click)="logout()">Logout</button>
