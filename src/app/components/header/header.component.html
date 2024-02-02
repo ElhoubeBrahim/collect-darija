@@ -7,11 +7,48 @@
       <div class="flex items-center gap-4">
         <i class="ri-information-2-line ri-lg cursor-pointer"></i>
         @if (user$ | async; as user) {
-          <img
-            src="{{ user.picture }}"
-            alt="User avatar"
-            class="w-[40px] h-[40px] rounded-full border"
-          />
+          <div class="relative" (click)="toggleDropdown()">
+            <img
+              src="{{ user.picture }}"
+              alt="User avatar"
+              class="w-[40px] h-[40px] rounded-full border cursor-pointer"
+            />
+
+            @if (dropdown.open) {
+              <div
+                class="z-10 bg-white rounded-lg shadow-md w-44 absolute top-12 right-0 border"
+              >
+                <ul class="py-2">
+                  @for (link of dropdown.links; track $index) {
+                    <li>
+                      <a
+                        routerLink="{{ link.route }}"
+                        class="flex items-center gap-4 px-4 py-2 hover:bg-gray-100"
+                      >
+                        @if (link.icon) {
+                          <i class="ri-{{ link.icon }}"></i>
+                        }
+                        {{ link.label }}
+                      </a>
+                    </li>
+                  }
+
+                  <!-- Divider -->
+                  <li class="border-t my-2"></li>
+
+                  <li>
+                    <a
+                      (click)="logout()"
+                      class="flex items-center gap-4 px-4 py-2 hover:bg-red-100 text-red-500 cursor-pointer"
+                    >
+                      <i class="ri-logout-box-r-line"></i>
+                      Logout
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            }
+          </div>
         }
       </div>
     </div>
