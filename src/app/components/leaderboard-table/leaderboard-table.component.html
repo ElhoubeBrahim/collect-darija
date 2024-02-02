@@ -1,0 +1,31 @@
+<div class="relative overflow-x-auto rounded-xl border mx-2">
+  <table class="w-full text-left font-bold text-text">
+    <thead class="font-bold text-text uppercase bg-white">
+      <tr>
+        <th scope="col" class="pl-3 py-3">#</th>
+        <th scope="col" class="py-3">User</th>
+        <th scope="col" class="px-6 py-3">Score</th>
+        <th scope="col" class="py-3">Translations</th>
+        <th scope="col" class="py-3">Audio</th>
+      </tr>
+    </thead>
+    <tbody class="bg-background border">
+      @for (item of users; track $index) {
+        <tr class="border">
+          <td class="pl-3 py-4">00{{ $index + 4 }}</td>
+          <th scope="row" class="py-4 text-text">
+            <img
+              class="w-9 h-9 rounded-full bg-cover object-cover inline-block mr-2"
+              src="{{ item.image }}"
+              alt=""
+            />
+            {{ item.name }}
+          </th>
+          <td class="px-6 py-4">{{ item.score }}</td>
+          <td class="py-4">{{ item.translations }}</td>
+          <td class="py-4">{{ item.audio }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
