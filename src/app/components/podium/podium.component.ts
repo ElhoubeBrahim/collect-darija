@@ -14,13 +14,13 @@ interface User {
 })
 export class PodiumComponent {
   users = [
-    { name: "Emma Aria", points: 1674, image: "../../../assets/user.png" },
+    { name: "Emma Aria", points: 1674, image: "assets/user.png" },
     {
       name: "Brahim Elhoube",
       points: 1847,
-      image: "../../../assets/user2.jpg",
+      image: "assets/user2.jpg",
     },
-    { name: "Eiden", points: 2430, image: "../../../assets/user3.jpg" },
+    { name: "Eiden", points: 2430, image: "assets/user3.jpg" },
   ];
 
   constructor() {
