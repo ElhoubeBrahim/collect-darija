@@ -112,4 +112,20 @@ export class AuthenticationService {
     // Otherwise, return the user data
     return userDoc.data() as UserModel;
   }
+
+  async getCurrentUser(): Promise<UserModel | null> {
+    const user = await this.auth.currentUser;
+    return user ? this.getUser(user.uid) : null;
+  }
+
+  async updateUser(user: UserModel): Promise<UserModel> {
+    // Get the user document from the database
+    const userDoc = this.firestore.collection("users").doc(user.id);
+
+    // Update the user document
+    await userDoc.update(user);
+
+    // Return the updated user
+    return user;
+  }
 }

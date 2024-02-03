@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 import { Sentence } from "../../models/sentences.model";
 import { ToastrService } from "ngx-toastr";
+import { TranslationService } from "../../services/translation.service";
 
 @Component({
   selector: "app-translate",
@@ -9,12 +10,7 @@ import { ToastrService } from "ngx-toastr";
   templateUrl: "./translate.component.html",
 })
 export class TranslateComponent {
-  sentence: Sentence = {
-    id: "1",
-    content:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
-    translationsCount: 0,
-  };
+  sentence: Sentence | null = null;
   translation: string = "";
 
   flags = {
@@ -23,8 +19,12 @@ export class TranslateComponent {
     TRANSLATION_LIMIT: 1000,
   };
 
-  constructor(private toastr: ToastrService) {
+  constructor(
+    private toastr: ToastrService,
+    private translate: TranslationService,
+  ) {
     this.flags.showPlaceholder = this.translation.length == 0;
+    this.loadNewSentence();
   }
 
   async copyToClipboard(event: Event, text: string) {
@@ -55,7 +55,22 @@ export class TranslateComponent {
     this.flags.showPlaceholder = this.translation.length == 0;
   }
 
-  submitTranslation() {
+  initializeTranslationData() {
+    this.sentence = null;
+    this.translation = "";
+    this.flags.showPlaceholder = this.translation.length == 0;
+  }
+
+  async loadNewSentence() {
+    this.initializeTranslationData();
+    const sentence = await this.translate.getSentenceToTranslate();
+    sentence
+      ? (this.sentence = sentence)
+      : this.toastr.info("No sentences to translate at the moment.");
+  }
+
+  async submitTranslation() {
+    // Validate the translation data
     if (this.translation.length == 0 || this.limitReached()) {
       this.toastr.error(
         "Ooops! Please provide a valid translation within the limits.",
@@ -63,9 +78,22 @@ export class TranslateComponent {
       return;
     }
 
+    // Disable the submit button
     this.flags.loading = true;
-    console.log("Submitted translation: ", this.translation);
+
+    // Submit the translation
+    if (this.sentence) {
+      await this.translate.translateSentence(this.sentence, this.translation);
+    }
+
+    // Enable the submit button
     this.flags.loading = false;
+
+    // Load the next sentence
+    this.toastr.success(
+      "Translation submitted successfully! Thanks for your contribution.",
+    );
+    this.loadNewSentence();
   }
 
   limitReached() {

@@ -1,71 +1,84 @@
-<div class="lg:w-[900px] xl:w-[1200px] mx-auto py-10 md:py-18">
-  <div class="grid md:grid-cols-2 gap-4">
-    <div class="shadow-md rounded-md border bg-background relative pb-10">
-      <div
-        class="border-b rounded-t px-8 py-4 flex justify-between items-center bg-white"
-      >
-        <h2 class="font-bold">English</h2>
-        <div class="flex gap-4 items-center">
-          <i
-            class="ri-file-copy-line ri-lg cursor-pointer"
-            (click)="copyToClipboard($event, sentence.content)"
-          ></i>
-          <i class="ri-volume-up-line ri-lg cursor-pointer"></i>
+@if (sentence) {
+  <div class="lg:w-[900px] xl:w-[1200px] mx-auto py-10 md:py-18">
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="shadow-md rounded-md border bg-background relative pb-10">
+        <div
+          class="border-b rounded-t px-8 py-4 flex justify-between items-center bg-white"
+        >
+          <h2 class="font-bold">English</h2>
+          <div class="flex gap-4 items-center">
+            <i
+              class="ri-file-copy-line ri-lg cursor-pointer"
+              (click)="copyToClipboard($event, sentence.content)"
+            ></i>
+            <i class="ri-volume-up-line ri-lg cursor-pointer"></i>
+          </div>
         </div>
-      </div>
-      <div class="px-8 py-5">
-        <p class="text-justify font-medium">
-          {{ sentence.content }}
-        </p>
-        <span class="absolute bottom-3 right-8 text-xs font-medium text-muted">
-          {{ sentence.content.length }} characters
-        </span>
-      </div>
-    </div>
-    <div class="shadow-md rounded-md border bg-background relative pb-10">
-      <div
-        class="border-b rounded-t px-8 py-4 flex justify-between items-center bg-white"
-      >
-        <h2 class="font-bold">Darija</h2>
-        <div class="flex gap-4 items-center">
-          <i
-            class="ri-file-copy-line ri-lg cursor-pointer"
-            (click)="copyToClipboard($event, translation)"
-          ></i>
-        </div>
-      </div>
-      <div class="px-8 py-5">
-        <div class="relative">
-          @if (flags.showPlaceholder) {
-            <span class="text-muted absolute pointer-events-none">
-              Type your translation here ...
-            </span>
-          }
+        <div class="px-8 py-5">
+          <p class="text-justify font-medium">
+            {{ sentence.content }}
+          </p>
           <span
-            class="block h-full w-full outline-none"
-            role="textbox"
-            contenteditable
-            (input)="updateTranslation($event)"
-          ></span>
+            class="absolute bottom-3 right-8 text-xs font-medium text-muted"
+          >
+            {{ sentence.content.length }} characters
+          </span>
         </div>
-        <span class="absolute bottom-3 right-8 text-xs font-medium text-muted">
-          {{ translation.length }} / {{ flags.TRANSLATION_LIMIT }}
-        </span>
+      </div>
+      <div class="shadow-md rounded-md border bg-background relative pb-10">
+        <div
+          class="border-b rounded-t px-8 py-4 flex justify-between items-center bg-white"
+        >
+          <h2 class="font-bold">Darija</h2>
+          <div class="flex gap-4 items-center">
+            <i
+              class="ri-file-copy-line ri-lg cursor-pointer"
+              (click)="copyToClipboard($event, translation)"
+            ></i>
+          </div>
+        </div>
+        <div class="px-8 py-5">
+          <div class="relative">
+            @if (flags.showPlaceholder) {
+              <span class="text-muted absolute pointer-events-none">
+                Type your translation here ...
+              </span>
+            }
+            <span
+              class="block h-full w-full outline-none"
+              role="textbox"
+              contenteditable
+              (input)="updateTranslation($event)"
+            ></span>
+          </div>
+          <span
+            class="absolute bottom-3 right-8 text-xs font-medium text-muted"
+          >
+            {{ translation.length }} / {{ flags.TRANSLATION_LIMIT }}
+          </span>
+        </div>
       </div>
     </div>
+    <div class="flex justify-end mt-4">
+      <button
+        class="flex items-center justify-center w-full md:w-auto gap-2 px-8 py-3 bg-primary text-white rounded-full font-medium hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        [disabled]="flags.loading || limitReached()"
+        (click)="submitTranslation()"
+      >
+        @if (flags.loading) {
+          <i class="ri-loader-4-line animate-spin"></i>
+        } @else {
+          <i class="ri-send-plane-2-fill"></i>
+        }
+        Submit
+      </button>
+    </div>
   </div>
-  <div class="flex justify-end mt-4">
-    <button
-      class="flex items-center justify-center w-full md:w-auto gap-2 px-8 py-3 bg-primary text-white rounded-full font-medium hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-      [disabled]="flags.loading || limitReached()"
-      (click)="submitTranslation()"
-    >
-      @if (flags.loading) {
-        <i class="ri-loader-4-line animate-spin"></i>
-      } @else {
-        <i class="ri-send-plane-2-fill"></i>
-      }
-      Submit
-    </button>
+} @else {
+  <div class="flex items-center justify-center py-18">
+    <div class="text-center text-muted">
+      <i class="ri-loader-4-line animate-spin ri-3x mb-4"></i>
+      <p>Loading Next Sentence ...</p>
+    </div>
   </div>
-</div>
+}
