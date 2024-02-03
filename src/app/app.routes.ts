@@ -8,6 +8,7 @@ import {
   redirectUnauthorizedTo,
 } from "@angular/fire/compat/auth-guard";
 import { MainComponent } from "./components/main/main.component";
+import { TranslateComponent } from "./pages/translate/translate.component";
 
 export const routes: Routes = [
   {
@@ -28,6 +29,10 @@ export const routes: Routes = [
       {
         path: "leaderboard",
         component: LeaderboardComponent,
+      },
+      {
+        path: "translate",
+        component: TranslateComponent,
       },
     ],
   },
