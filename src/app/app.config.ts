@@ -10,32 +10,45 @@ import { provideToastr } from "ngx-toastr";
 
 import { routes } from "./app.routes";
 import { initializeApp, provideFirebaseApp } from "@angular/fire/app";
-import { getAuth, provideAuth } from "@angular/fire/auth";
+import { connectAuthEmulator, getAuth, provideAuth } from "@angular/fire/auth";
 import {
   getAnalytics,
   provideAnalytics,
   ScreenTrackingService,
   UserTrackingService,
 } from "@angular/fire/analytics";
-import { getFirestore, provideFirestore } from "@angular/fire/firestore";
 import { environment } from "../environments/environment.development";
 import { provideState, provideStore } from "@ngrx/store";
 import { provideStoreDevtools } from "@ngrx/store-devtools";
 import { FIREBASE_OPTIONS } from "@angular/fire/compat";
+import { USE_EMULATOR as USE_FIRESTORE_EMULATOR } from "@angular/fire/compat/firestore";
 import { authenticationReducer } from "./store/authentication/authentication.reducer";
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     { provide: FIREBASE_OPTIONS, useValue: environment.firebaseConfig },
+    {
+      provide: USE_FIRESTORE_EMULATOR,
+      useValue: environment.useEmulators ? ["localhost", 8080] : undefined,
+    },
     importProvidersFrom(
       provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     ),
-    importProvidersFrom(provideAuth(() => getAuth())),
+    importProvidersFrom(
+      provideAuth(() => {
+        const auth = getAuth();
+
+        if (environment.useEmulators) {
+          connectAuthEmulator(auth, "http://localhost:9099");
+        }
+
+        return auth;
+      }),
+    ),
     importProvidersFrom(provideAnalytics(() => getAnalytics())),
     ScreenTrackingService,
     UserTrackingService,
-    importProvidersFrom(provideFirestore(() => getFirestore())),
     provideAnimations(),
     provideToastr(),
     provideStore(),

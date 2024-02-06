@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "precommit": "pretty-quick --staged",
-    "prepare": "husky install .husky"
+    "prepare": "husky install .husky",
+    "emulator": "firebase emulators:start  --import=./data --export-on-exit data"
   },
   "private": true,
   "dependencies": {
@@ -34,7 +35,9 @@
     "@angular-devkit/build-angular": "^17.1.1",
     "@angular/cli": "^17.1.1",
     "@angular/compiler-cli": "^17.1.0",
+    "@faker-js/faker": "^8.4.0",
     "@types/jasmine": "~5.1.0",
+    "firebase-admin": "^12.0.0",
     "husky": "^9.0.6",
     "jasmine-core": "~5.1.0",
     "karma": "~6.4.0",
