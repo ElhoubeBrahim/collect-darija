@@ -2,8 +2,8 @@ const admin = require("firebase-admin");
 const { faker } = require("@faker-js/faker");
 
 // Import data
-const users = require("./data/users.data");
-const sentences = require("./data/sentences.data");
+const users = require("./seeders/users.data");
+const sentences = require("./seeders/sentences.data");
 
 // initialization
 const projectId = "collect-darija";
