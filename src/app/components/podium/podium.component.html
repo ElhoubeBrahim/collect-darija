@@ -1,50 +1,62 @@
-<div
-  class="grid grid-cols-3 drop-shadow-lg px-4 lg:w-[800px] mx-auto w-full mb-10"
->
-  <div class="mt-24">
+@if (users$ | async; as users) {
+  @if (users.length == 3) {
     <div
-      class="flex flex-col items-center bg-background rounded-l-3xl h-full py-2"
+      class="grid grid-cols-3 drop-shadow-lg px-4 lg:w-[800px] mx-auto w-full mb-10"
     >
-      <img
-        class="absolute top-14 inline-block w-20 h-20 md:h-24 md:w-24 rounded-full ring-4 ring-blue bg-cover object-cover"
-        [src]="users[1].image"
-        alt=""
-      />
-      <div class="flex flex-col items-center space-y-1 mt-1 p-4 pt-0">
-        <img class="mt-16" src="assets/shapes/shape2.svg" alt="" />
-        <h2 class="font-bold text-text text-center">{{ users[1].name }}</h2>
-        <p class="text-blue font-bold">{{ users[1].points }}</p>
+      <div class="mt-24">
+        <div
+          class="flex flex-col items-center bg-background rounded-l-3xl h-full py-2"
+        >
+          <img
+            class="absolute top-14 inline-block w-20 h-20 md:h-24 md:w-24 rounded-full ring-4 ring-blue bg-cover object-cover"
+            [src]="users[1].picture"
+            alt=""
+          />
+          <div class="flex flex-col items-center space-y-1 mt-1 p-4 pt-0">
+            <img class="mt-16" src="assets/shapes/shape2.svg" alt="" />
+            <h2 class="font-bold text-text text-center">
+              {{ users[1].username }}
+            </h2>
+            <p class="text-blue font-bold">{{ users[1].score }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-primary rounded-t-3xl py-4">
+        <div class="flex flex-col items-center">
+          <img
+            class="inline-block h-24 w-24 md:h-32 md:w-32 rounded-full ring-4 ring-orangeLight bg-cover object-cover"
+            [src]="users[0].picture"
+            alt=""
+          />
+          <div class="flex flex-col items-center space-y-1 mt-1 p-4 pt-0">
+            <img class="mt-2" src="assets/shapes/shape1.svg" alt="" />
+            <h2 class="font-bold text-white text-center">
+              {{ users[0].username }}
+            </h2>
+            <p class="text-orangeLight font-bold">{{ users[0].score }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="mt-24">
+        <div
+          class="flex flex-col items-center bg-background rounded-r-3xl h-full py-2"
+        >
+          <img
+            class="absolute top-14 inline-block w-20 h-20 md:h-24 md:w-24 rounded-full ring-4 ring-blue bg-cover object-cover"
+            [src]="users[2].picture"
+            alt=""
+          />
+          <div class="flex flex-col items-center space-y-1 mt-1 p-4 pt-0">
+            <img class="mt-16" src="assets/shapes/shape3.svg" alt="" />
+            <h2 class="font-bold text-text text-center">
+              {{ users[2].username }}
+            </h2>
+            <p class="text-green font-bold">{{ users[2].score }}</p>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="bg-primary rounded-t-3xl py-4">
-    <div class="flex flex-col items-center">
-      <img
-        class="inline-block h-24 w-24 md:h-32 md:w-32 rounded-full ring-4 ring-orangeLight bg-cover object-cover"
-        [src]="users[0].image"
-        alt=""
-      />
-      <div class="flex flex-col items-center space-y-1 mt-1 p-4 pt-0">
-        <img class="mt-2" src="assets/shapes/shape1.svg" alt="" />
-        <h2 class="font-bold text-white text-center">{{ users[0].name }}</h2>
-        <p class="text-orangeLight font-bold">{{ users[0].points }}</p>
-      </div>
-    </div>
-  </div>
-  <div class="mt-24">
-    <div
-      class="flex flex-col items-center bg-background rounded-r-3xl h-full py-2"
-    >
-      <img
-        class="absolute top-14 inline-block w-20 h-20 md:h-24 md:w-24 rounded-full ring-4 ring-blue bg-cover object-cover"
-        [src]="users[2].image"
-        alt=""
-      />
-      <div class="flex flex-col items-center space-y-1 mt-1 p-4 pt-0">
-        <img class="mt-16" src="assets/shapes/shape3.svg" alt="" />
-        <h2 class="font-bold text-text text-center">{{ users[2].name }}</h2>
-        <p class="text-green font-bold">{{ users[2].points }}</p>
-      </div>
-    </div>
-  </div>
-</div>
+  }
+} @else {
+  <div class="text-center">No one in the podium yet</div>
+}

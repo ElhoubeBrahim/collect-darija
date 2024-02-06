@@ -1,59 +1,23 @@
 import { Component } from "@angular/core";
-
-interface users {
-  name: string;
-  image: string;
-  score: number;
-  translations: number;
-  audio: number;
-}
+import { Store } from "@ngrx/store";
+import { restOfLeaderboardSelector } from "../../store/leaderboard/leaderboard.selector";
+import { AsyncPipe, NgClass } from "@angular/common";
+import { User } from "../../models/users.model";
+import { userSelector } from "../../store/authentication/authentication.selector";
 
 @Component({
   selector: "app-leaderboard-table",
   standalone: true,
-  imports: [],
+  imports: [AsyncPipe, NgClass],
   templateUrl: "./leaderboard-table.component.html",
 })
 export class LeaderboardTableComponent {
-  users = [
-    {
-      name: "John",
-      image: "../../../assets/user2.jpg",
-      score: 100,
-      translations: 10,
-      audio: 25,
-    },
-    {
-      name: "Jane",
-      image: "../../../assets/user2.jpg",
-      score: 90,
-      translations: 8,
-      audio: 20,
-    },
-    {
-      name: "Doe",
-      image: "../../../assets/user3.jpg",
-      score: 80,
-      translations: 6,
-      audio: 15,
-    },
-    {
-      name: "Doe",
-      image: "../../../assets/user3.jpg",
-      score: 80,
-      translations: 6,
-      audio: 15,
-    },
-    {
-      name: "Doe",
-      image: "../../../assets/user3.jpg",
-      score: 80,
-      translations: 6,
-      audio: 15,
-    },
-  ];
+  users$ = this.store.select(restOfLeaderboardSelector);
+  currentUser: User | null = null;
 
-  constructor() {
-    this.users = this.users.sort((a, b) => b.score - a.score);
+  constructor(private store: Store) {
+    this.store.select(userSelector).subscribe((user) => {
+      this.currentUser = user;
+    });
   }
 }

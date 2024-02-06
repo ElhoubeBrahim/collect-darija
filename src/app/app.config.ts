@@ -23,6 +23,9 @@ import { provideStoreDevtools } from "@ngrx/store-devtools";
 import { FIREBASE_OPTIONS } from "@angular/fire/compat";
 import { USE_EMULATOR as USE_FIRESTORE_EMULATOR } from "@angular/fire/compat/firestore";
 import { authenticationReducer } from "./store/authentication/authentication.reducer";
+import { leaderboardReducer } from "./store/leaderboard/leaderboard.reducer";
+import { provideEffects } from "@ngrx/effects";
+import { LeaderboardEffects } from "./store/leaderboard/leaderboard.effects";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -56,6 +59,11 @@ export const appConfig: ApplicationConfig = {
       name: "authentication",
       reducer: authenticationReducer,
     }),
+    provideState({
+      name: "leaderboard",
+      reducer: leaderboardReducer,
+    }),
+    provideEffects(LeaderboardEffects),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
   ],
 };

@@ -1,30 +1,16 @@
 import { Component } from "@angular/core";
-
-interface User {
-  name: string;
-  points: number;
-  image: string;
-}
+import { Store } from "@ngrx/store";
+import { top3Selector } from "../../store/leaderboard/leaderboard.selector";
+import { AsyncPipe } from "@angular/common";
 
 @Component({
   selector: "app-podium",
   standalone: true,
-  imports: [],
+  imports: [AsyncPipe],
   templateUrl: "./podium.component.html",
 })
 export class PodiumComponent {
-  users = [
-    { name: "Emma Aria", points: 1674, image: "assets/user.png" },
-    {
-      name: "Brahim Elhoube",
-      points: 1847,
-      image: "assets/user2.jpg",
-    },
-    { name: "Eiden", points: 2430, image: "assets/user3.jpg" },
-  ];
+  users$ = this.store.select(top3Selector);
 
-  constructor() {
-    this.users.sort((a, b) => b.points - a.points);
-    console.log(this.users);
-  }
+  constructor(private store: Store) {}
 }

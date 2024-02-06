@@ -8,3 +8,7 @@ export interface User {
   createdAt: Date;
   lastLoginAt: Date;
 }
+
+export interface UserWithRanking extends User {
+  ranking: number;
+}
