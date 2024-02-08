@@ -1,12 +1,15 @@
+import { Timestamp } from "@firebase/firestore";
+
 export interface User {
   id: string;
   username: string;
   picture: string;
   email: string;
   score: number;
+  scoreUpdatedAt: Timestamp;
   translationsCount: number;
-  createdAt: Date;
-  lastLoginAt: Date;
+  createdAt: Timestamp;
+  lastLoginAt: Timestamp;
 }
 
 export interface UserWithRanking extends User {

@@ -9,9 +9,10 @@ import { User as UserModel } from "../models/users.model";
 import { Router } from "@angular/router";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
+import { Timestamp } from "@firebase/firestore";
 import { lastValueFrom, take } from "rxjs";
 import { Store } from "@ngrx/store";
-import { login, logout } from "../store/authentication/authentication.actions";
+import { logout } from "../store/authentication/authentication.actions";
 
 @Injectable({
   providedIn: "root",
@@ -82,9 +83,11 @@ export class AuthenticationService {
       picture: user.photoURL || "assets/user.png",
       email: user.email,
       score: userData?.score || 0,
+      scoreUpdatedAt:
+        userData?.scoreUpdatedAt || Timestamp.fromDate(new Date()),
       translationsCount: userData?.translationsCount || 0,
-      createdAt: userData?.createdAt || new Date(),
-      lastLoginAt: new Date(),
+      createdAt: userData?.createdAt || Timestamp.fromDate(new Date()),
+      lastLoginAt: Timestamp.fromDate(new Date()),
     };
 
     // Save the user document to the database

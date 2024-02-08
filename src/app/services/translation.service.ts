@@ -5,6 +5,7 @@ import { firstValueFrom } from "rxjs";
 import { AuthenticationService } from "./authentication.service";
 import { ToastrService } from "ngx-toastr";
 import { Translation } from "../models/translations.model";
+import { Timestamp } from "@firebase/firestore";
 
 @Injectable({
   providedIn: "root",
@@ -56,7 +57,7 @@ export class TranslationService {
       userId: user.id,
       sentenceId: sentence.id,
       translation,
-      translatedAt: new Date(),
+      translatedAt: Timestamp.fromDate(new Date()),
     };
 
     // Save the translation
@@ -76,6 +77,7 @@ export class TranslationService {
       ...user,
       translationsCount: user.translationsCount + 1,
       score: user.score + 10,
+      scoreUpdatedAt: Timestamp.fromDate(new Date()),
     });
   }
 }

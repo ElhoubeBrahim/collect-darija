@@ -30,7 +30,20 @@ async function seedUsers() {
     });
 
     // Create user
-    await db.collection("users").doc(user.id).set(user, { merge: true });
+    await db
+      .collection("users")
+      .doc(user.id)
+      .set(
+        {
+          ...user,
+          scoreUpdatedAt: admin.firestore.Timestamp.fromDate(
+            user.scoreUpdatedAt,
+          ),
+          createdAt: admin.firestore.Timestamp.fromDate(user.createdAt),
+          lastLoginAt: admin.firestore.Timestamp.fromDate(user.lastLoginAt),
+        },
+        { merge: true },
+      );
   }
 }
 
@@ -54,7 +67,7 @@ async function seedTranslations() {
         userId: faker.helpers.arrayElement(users).id,
         sentenceId: sentence.id,
         translation: faker.lorem.sentence({ min: 5, max: 20 }),
-        translatedAt: faker.date.recent(),
+        translatedAt: admin.firestore.Timestamp.fromDate(new Date()),
       };
 
       // Save the translation
@@ -76,6 +89,7 @@ async function seedTranslations() {
         .update({
           translationsCount: admin.firestore.FieldValue.increment(1),
           score: admin.firestore.FieldValue.increment(10),
+          scoreUpdatedAt: admin.firestore.Timestamp.fromDate(new Date()),
         });
     }
   }
