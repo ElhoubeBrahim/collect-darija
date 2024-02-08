@@ -14,7 +14,7 @@ module.exports = {
         orangeLight: "#FFAA00",
       },
       fontFamily: {
-        sans: ["IBM Plex Sans", "sans-serif"],
+        sans: ["Outfit", "sans-serif"],
       },
     },
     container: {
