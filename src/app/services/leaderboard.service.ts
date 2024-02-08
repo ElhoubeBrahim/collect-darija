@@ -8,6 +8,8 @@ import { AuthenticationService } from "./authentication.service";
   providedIn: "root",
 })
 export class LeaderboardService {
+  private LEADERBOARD_SIZE = 10;
+
   constructor(
     private firestore: AngularFirestore,
     private authentication: AuthenticationService,
@@ -18,7 +20,11 @@ export class LeaderboardService {
     // and limit the results to 10
     const users$ = this.firestore
       .collection("users", (ref) =>
-        ref.orderBy("score", "desc").limit(10).where("score", ">", 0),
+        ref
+          .orderBy("score", "desc")
+          .orderBy("scoreUpdatedAt", "asc")
+          .limit(this.LEADERBOARD_SIZE)
+          .where("score", ">", 0),
       )
       .get()
       .pipe();
@@ -32,11 +38,12 @@ export class LeaderboardService {
 
     // Get the current user
     const user = await this.authentication.getCurrentUser();
-    if (user && user.score > 0) {
+    // If the current user is not in the leaderboard
+    if (user && user.score > 0 && !leaderboard.find((u) => u.id === user.id)) {
       // Get the current user's ranking
       const ranking = await this.getCurrentUserRanking();
       // Add the current user to the leaderboard
-      ranking > 10 && leaderboard.push({ ...user, ranking });
+      ranking > this.LEADERBOARD_SIZE && leaderboard.push({ ...user, ranking });
     }
 
     // Return the leaderboard
@@ -52,12 +59,17 @@ export class LeaderboardService {
 
     // Get users with a higher score
     const users$ = this.firestore
-      .collection("users", (ref) => ref.where("score", ">", user.score))
+      .collection("users", (ref) =>
+        ref
+          .orderBy("score", "desc")
+          .orderBy("scoreUpdatedAt", "asc")
+          .where("score", ">=", user.score),
+      )
       .get()
       .pipe();
 
     // Return the number of users with a higher score
     const users = await lastValueFrom(users$);
-    return users.size + 1;
+    return users.docs.findIndex((u) => u.id === user.id) + 1;
   }
 }
