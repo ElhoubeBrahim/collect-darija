@@ -1,0 +1,23 @@
+<div class="p-4 border border-muted shadow rounded-md h-full">
+  <div class="flex items-center gap-8 mb-4">
+    <div
+      class="flex items-center justify-center rounded-full h-[70px] w-[70px] shrink-0"
+      [ngStyle]="{ backgroundColor: color + '20' }"
+    >
+      <i class="ri {{ icon }} text-4xl" [ngStyle]="{ color: color }"></i>
+    </div>
+    <div>
+      <p class="text-2xl font-semibold">{{ number }}</p>
+      <p class="text-muted">{{ title }}</p>
+    </div>
+  </div>
+  <div class="flex justify-end">
+    <a
+      [routerLink]="link"
+      class="flex text-primary gap-2 cursor-pointer hover:underline"
+    >
+      Contribute
+      <i class="ri ri-arrow-right-s-line"></i>
+    </a>
+  </div>
+</div>
