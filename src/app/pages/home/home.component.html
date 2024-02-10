@@ -38,7 +38,9 @@
   </div>
 }
 
-<div class="p-8 border border-muted shadow rounded-md h-full lg:w-1/2">
-  <h3 class="font-semibold text-xl mb-4">Weekly contributions</h3>
-  <div echarts [options]="options" class="demo-chart"></div>
-</div>
+@if (chartOptions) {
+  <div class="p-8 border border-muted shadow rounded-md h-full lg:w-1/2">
+    <h3 class="font-semibold text-xl mb-4">Weekly contributions</h3>
+    <div echarts [options]="chartOptions" class="demo-chart"></div>
+  </div>
+}

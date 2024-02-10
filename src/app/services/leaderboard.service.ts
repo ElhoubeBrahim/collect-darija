@@ -3,6 +3,8 @@ import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { User, UserWithRanking } from "../models/users.model";
 import { lastValueFrom } from "rxjs";
 import { AuthenticationService } from "./authentication.service";
+import { ToastrService } from "ngx-toastr";
+import { Translation } from "../models/translations.model";
 
 @Injectable({
   providedIn: "root",
@@ -13,6 +15,7 @@ export class LeaderboardService {
   constructor(
     private firestore: AngularFirestore,
     private authentication: AuthenticationService,
+    private toastr: ToastrService,
   ) {}
 
   async loadLeaderboard(): Promise<UserWithRanking[]> {
@@ -71,5 +74,58 @@ export class LeaderboardService {
     // Return the number of users with a higher score
     const users = await lastValueFrom(users$);
     return users.docs.findIndex((u) => u.id === user.id) + 1;
+  }
+
+  async getWeeklyContributions(): Promise<{ day: Date; value: number }[]> {
+    console.log("getWeeklyContributions");
+    // Get the current user
+    const user = await this.authentication.getCurrentUser();
+    if (!user) {
+      this.toastr.error("Please login to view weekly contributions!");
+      return [];
+    }
+
+    // Get the current date
+    const now = new Date();
+    const range = [
+      new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7),
+      new Date(now.getFullYear(), now.getMonth(), now.getDate()),
+    ];
+
+    // Get the translations
+    const translations$ = this.firestore
+      .collection<Translation>("translations", (ref) =>
+        ref
+          .where("userId", "==", user.id)
+          .where("translatedAt", ">=", range[0])
+          .where(
+            "translatedAt",
+            "<=",
+            new Date(range[1].getTime() + 24 * 60 * 60 * 1000),
+          ),
+      )
+      .get();
+    const translations = await lastValueFrom(translations$);
+
+    // Count contributions
+    const contributions = [];
+
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate() - i,
+      );
+      contributions.push({
+        day: date,
+        value: translations.docs.filter(
+          (t) =>
+            t.data().translatedAt.toDate().toDateString() ===
+            date.toDateString(),
+        ).length,
+      });
+    }
+
+    return contributions.reverse();
   }
 }

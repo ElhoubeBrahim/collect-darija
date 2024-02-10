@@ -1,11 +1,15 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { Store, select } from "@ngrx/store";
 import { userSelector } from "../../store/authentication/authentication.selector";
-import { AuthenticationService } from "../../services/authentication.service";
 import { AsyncPipe } from "@angular/common";
 import { HomeCardComponent } from "../../components/home-card/home-card.component";
 import { EChartsOption } from "echarts";
 import { NgxEchartsDirective } from "ngx-echarts";
+import {
+  weeklyContributionsLoadedSelector,
+  weeklyContributionsSelector,
+} from "../../store/weekly-contributions/weekly-contributions.selector";
+import { loadWeeklyContributions } from "../../store/weekly-contributions/weekly-contributions.actions";
 
 @Component({
   selector: "app-home",
@@ -13,20 +17,34 @@ import { NgxEchartsDirective } from "ngx-echarts";
   imports: [AsyncPipe, HomeCardComponent, NgxEchartsDirective],
   templateUrl: "./home.component.html",
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
   user$ = this.store.pipe(select(userSelector));
-  weeklyContributions = [10, 5, 26, 14, 3, 34, 20];
-  options: EChartsOption = {};
+  weeklyContributionsLoaded$ = this.store.pipe(
+    select(weeklyContributionsLoadedSelector),
+  );
+  weeklyContributions$ = this.store.pipe(select(weeklyContributionsSelector));
+  chartOptions?: EChartsOption;
 
-  constructor(
-    private store: Store,
-    private authentication: AuthenticationService,
-  ) {}
+  constructor(private store: Store) {
+    // Load the weekly contributions if they are not loaded (One time only)
+    this.weeklyContributionsLoaded$.subscribe((loaded) => {
+      if (!loaded) {
+        this.store.dispatch(loadWeeklyContributions());
+      }
+    });
 
-  ngOnInit(): void {
-    this.options = {
+    // Subscribe to the data till it's loaded
+    this.weeklyContributions$.subscribe((data) => {
+      if (data && data.length > 0) {
+        this.chartOptions = this.getChartOptions(data); // Update the chart options
+      }
+    });
+  }
+
+  getChartOptions(data: { day: Date; value: number }[]): EChartsOption {
+    return {
       xAxis: {
-        data: ["M", "T", "W", "T", "F", "S", "S"],
+        data: data.map((d) => d.day.toString().slice(0, 3).toUpperCase()),
         silent: false,
         splitLine: {
           show: false,
@@ -39,8 +57,8 @@ export class HomeComponent implements OnInit {
       series: [
         {
           type: "bar",
-          data: this.weeklyContributions.map((value, idx) => ({
-            value,
+          data: data.map((value, idx) => ({
+            value: value.value,
             itemStyle: {
               color: idx % 2 === 0 ? "#F06225" : "#AEB8C5",
             },
@@ -54,9 +72,5 @@ export class HomeComponent implements OnInit {
       animationEasing: "elasticOut",
       animationDelayUpdate: (idx) => idx * 5,
     };
-  }
-
-  async logout() {
-    await this.authentication.logout();
   }
 }
