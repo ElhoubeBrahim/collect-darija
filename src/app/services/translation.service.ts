@@ -83,4 +83,24 @@ export class TranslationService {
       scoreUpdatedAt: Timestamp.fromDate(new Date()),
     });
   }
+
+  async getTranslationsHistory(limit = 10): Promise<Translation[]> {
+    const user = await this.authentication.getCurrentUser();
+    if (!user) {
+      this.toastr.error("Please login to view translations history!");
+      return [];
+    }
+
+    const translations$ = this.firestore
+      .collection<Translation>("translations", (ref) =>
+        ref
+          .where("userId", "==", user.id)
+          .orderBy("translatedAt", "desc")
+          .limit(limit),
+      )
+      .get();
+
+    const result = await firstValueFrom(translations$);
+    return result.docs.map((doc) => doc.data());
+  }
 }
