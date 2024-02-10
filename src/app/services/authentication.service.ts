@@ -77,18 +77,7 @@ export class AuthenticationService {
     let userData = await this.getUser(user.uid);
 
     // If the user document does not exist, create a new user, otherwise update the existing user
-    userData = {
-      id: user.uid,
-      username: user.displayName || "Unknown",
-      picture: user.photoURL || "assets/user.png",
-      email: user.email,
-      score: userData?.score || 0,
-      scoreUpdatedAt:
-        userData?.scoreUpdatedAt || Timestamp.fromDate(new Date()),
-      translationsCount: userData?.translationsCount || 0,
-      createdAt: userData?.createdAt || Timestamp.fromDate(new Date()),
-      lastLoginAt: Timestamp.fromDate(new Date()),
-    };
+    userData = this.initUser(userData || {});
 
     // Save the user document to the database
     await this.firestore
@@ -130,5 +119,24 @@ export class AuthenticationService {
 
     // Return the updated user
     return user;
+  }
+
+  initUser(user: Partial<UserModel>) {
+    return {
+      id: user.id || "",
+      username: user.username || "Unknown",
+      picture: user.picture || "assets/user.png",
+      email: user.email || "",
+      score: user.score || 0,
+      scoreUpdatedAt: user.scoreUpdatedAt || Timestamp.fromDate(new Date()),
+      stats: user.stats || {
+        translations: 0,
+        validatedTranslations: 0,
+        recordings: 0,
+        validatedRecordings: 0,
+      },
+      createdAt: user.createdAt || Timestamp.fromDate(new Date()),
+      lastLoginAt: user.lastLoginAt || Timestamp.fromDate(new Date()),
+    };
   }
 }

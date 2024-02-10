@@ -32,7 +32,7 @@
               {{ currentUser && currentUser.id === user.id ? "(You)" : "" }}
             </th>
             <td class="px-6 py-4">{{ user.score }}</td>
-            <td class="py-4">{{ user.translationsCount }}</td>
+            <td class="py-4">{{ user.stats.translations }}</td>
           </tr>
         }
       </tbody>

@@ -15,12 +15,6 @@ import { NgxEchartsDirective } from "ngx-echarts";
 })
 export class HomeComponent implements OnInit {
   user$ = this.store.pipe(select(userSelector));
-  stats = {
-    translations: 0,
-    validatedTranslations: 0,
-    recordings: 0,
-    validatedRecordings: 0,
-  };
   weeklyContributions = [10, 5, 26, 14, 3, 34, 20];
   options: EChartsOption = {};
 

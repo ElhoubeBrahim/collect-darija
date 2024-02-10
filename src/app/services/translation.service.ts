@@ -75,7 +75,10 @@ export class TranslationService {
     // Update user translations count & score
     await this.authentication.updateUser({
       ...user,
-      translationsCount: user.translationsCount + 1,
+      stats: {
+        ...user.stats,
+        translations: user.stats.translations + 1,
+      },
       score: user.score + 10,
       scoreUpdatedAt: Timestamp.fromDate(new Date()),
     });

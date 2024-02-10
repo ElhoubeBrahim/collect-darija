@@ -7,7 +7,12 @@ export interface User {
   email: string;
   score: number;
   scoreUpdatedAt: Timestamp;
-  translationsCount: number;
+  stats: {
+    translations: number;
+    validatedTranslations: number;
+    recordings: number;
+    validatedRecordings: number;
+  };
   createdAt: Timestamp;
   lastLoginAt: Timestamp;
 }
