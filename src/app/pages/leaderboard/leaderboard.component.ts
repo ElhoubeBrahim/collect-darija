@@ -1,10 +1,11 @@
 import { Component } from "@angular/core";
-import { Store } from "@ngrx/store";
+import { Store, select } from "@ngrx/store";
 import { AsyncPipe } from "@angular/common";
 import { PodiumComponent } from "../../components/podium/podium.component";
 import { LeaderboardTableComponent } from "../../components/leaderboard-table/leaderboard-table.component";
 import { setLeaderboard } from "../../store/leaderboard/leaderboard.actions";
 import { LeaderboardService } from "../../services/leaderboard.service";
+import { leaderboardLoadedSelector } from "../../store/leaderboard/leaderboard.selector";
 
 @Component({
   selector: "app-home",
@@ -13,14 +14,22 @@ import { LeaderboardService } from "../../services/leaderboard.service";
   templateUrl: "./leaderboard.component.html",
 })
 export class LeaderboardComponent {
+  leaderboardLoaded$ = this.store.pipe(select(leaderboardLoadedSelector));
+
   constructor(
     private store: Store,
     private leaderboard: LeaderboardService,
   ) {
-    this.leaderboard.getLeaderboard().subscribe((users) => {
-      this.leaderboard.setupLeaderboard(users).then((leaderboard) => {
-        this.store.dispatch(setLeaderboard(leaderboard));
-      });
+    // Subscribe to the leaderboard data if the leaderboard is not loaded
+    this.leaderboardLoaded$.subscribe((loaded) => {
+      if (!loaded) {
+        this.leaderboard.getLeaderboard().subscribe((users) => {
+          this.leaderboard.setupLeaderboard(users).then((leaderboard) => {
+            // Calculate the leaderboard users' rankings
+            this.store.dispatch(setLeaderboard(leaderboard)); // Update the leaderboard (store)
+          });
+        });
+      }
     });
   }
 }
