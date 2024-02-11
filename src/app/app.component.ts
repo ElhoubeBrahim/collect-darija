@@ -3,7 +3,11 @@ import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { RouterOutlet } from "@angular/router";
 import { AuthenticationService } from "./services/authentication.service";
 import { Store } from "@ngrx/store";
-import { login, logout } from "./store/authentication/authentication.actions";
+import {
+  login,
+  logout,
+  setUser,
+} from "./store/authentication/authentication.actions";
 import { of, switchMap } from "rxjs";
 
 @Component({
@@ -27,7 +31,7 @@ export class AppComponent {
         ),
       )
       .subscribe((data) => {
-        this.store.dispatch(data ? login(data) : logout());
+        this.store.dispatch(data ? setUser(data) : logout());
       });
   }
 }
