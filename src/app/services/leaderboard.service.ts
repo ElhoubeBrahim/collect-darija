@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { User, UserWithRanking } from "../models/users.model";
-import { lastValueFrom } from "rxjs";
+import { Observable, lastValueFrom } from "rxjs";
 import { AuthenticationService } from "./authentication.service";
 import { ToastrService } from "ngx-toastr";
 import { Translation } from "../models/translations.model";
@@ -18,24 +18,22 @@ export class LeaderboardService {
     private toastr: ToastrService,
   ) {}
 
-  async loadLeaderboard(): Promise<UserWithRanking[]> {
-    // Select users from the database ordered by score
-    // and limit the results to 10
-    const users$ = this.firestore
-      .collection("users", (ref) =>
+  getLeaderboard(): Observable<User[]> {
+    return this.firestore
+      .collection<User>("users", (ref) =>
         ref
           .orderBy("score", "desc")
           .orderBy("scoreUpdatedAt", "asc")
           .limit(this.LEADERBOARD_SIZE)
           .where("score", ">", 0),
       )
-      .get()
-      .pipe();
-    const users = await lastValueFrom(users$);
+      .valueChanges();
+  }
 
-    // Get the users
-    const leaderboard = users.docs.map((doc, index) => ({
-      ...(doc.data() as User),
+  async setupLeaderboard(users: User[]): Promise<UserWithRanking[]> {
+    // Get the users with their ranking
+    const leaderboard = users.map((user, index) => ({
+      ...user,
       ranking: index + 1,
     }));
 

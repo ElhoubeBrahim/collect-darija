@@ -25,7 +25,6 @@ import { USE_EMULATOR as USE_FIRESTORE_EMULATOR } from "@angular/fire/compat/fir
 import { authenticationReducer } from "./store/authentication/authentication.reducer";
 import { leaderboardReducer } from "./store/leaderboard/leaderboard.reducer";
 import { provideEffects } from "@ngrx/effects";
-import { LeaderboardEffects } from "./store/leaderboard/leaderboard.effects";
 import { provideEcharts } from "ngx-echarts";
 import { weeklyContributionsReducer } from "./store/weekly-contributions/weekly-contributions.reducer";
 import { WeeklyContributionsEffects } from "./store/weekly-contributions/weekly-contributions.effects";
@@ -70,7 +69,7 @@ export const appConfig: ApplicationConfig = {
       name: "weekly-contributions",
       reducer: weeklyContributionsReducer,
     }),
-    provideEffects(LeaderboardEffects, WeeklyContributionsEffects),
+    provideEffects(WeeklyContributionsEffects),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
     provideEcharts(),
   ],

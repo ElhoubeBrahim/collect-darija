@@ -3,8 +3,8 @@ import { Store } from "@ngrx/store";
 import { AsyncPipe } from "@angular/common";
 import { PodiumComponent } from "../../components/podium/podium.component";
 import { LeaderboardTableComponent } from "../../components/leaderboard-table/leaderboard-table.component";
-import { leaderboardLoadedSelector } from "../../store/leaderboard/leaderboard.selector";
-import { loadLeaderboard } from "../../store/leaderboard/leaderboard.actions";
+import { setLeaderboard } from "../../store/leaderboard/leaderboard.actions";
+import { LeaderboardService } from "../../services/leaderboard.service";
 
 @Component({
   selector: "app-home",
@@ -13,13 +13,14 @@ import { loadLeaderboard } from "../../store/leaderboard/leaderboard.actions";
   templateUrl: "./leaderboard.component.html",
 })
 export class LeaderboardComponent {
-  private leaderboardLoaded$ = this.store.select(leaderboardLoadedSelector);
-
-  constructor(private store: Store) {
-    this.leaderboardLoaded$.subscribe((loaded) => {
-      if (!loaded) {
-        this.store.dispatch(loadLeaderboard());
-      }
+  constructor(
+    private store: Store,
+    private leaderboard: LeaderboardService,
+  ) {
+    this.leaderboard.getLeaderboard().subscribe((users) => {
+      this.leaderboard.setupLeaderboard(users).then((leaderboard) => {
+        this.store.dispatch(setLeaderboard(leaderboard));
+      });
     });
   }
 }
