@@ -15,7 +15,6 @@ export class LeaderboardService {
   constructor(
     private firestore: AngularFirestore,
     private authentication: AuthenticationService,
-    private toastr: ToastrService,
   ) {}
 
   getLeaderboard(): Observable<User[]> {
@@ -78,10 +77,7 @@ export class LeaderboardService {
     console.log("getWeeklyContributions");
     // Get the current user
     const user = await this.authentication.getCurrentUser();
-    if (!user) {
-      this.toastr.error("Please login to view weekly contributions!");
-      return [];
-    }
+    if (!user) return [];
 
     // Get the current date
     const now = new Date();

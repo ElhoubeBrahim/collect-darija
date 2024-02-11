@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { Store, select } from "@ngrx/store";
 import { userSelector } from "../../store/authentication/authentication.selector";
 import { AsyncPipe } from "@angular/common";
@@ -9,7 +9,9 @@ import {
   weeklyContributionsLoadedSelector,
   weeklyContributionsSelector,
 } from "../../store/weekly-contributions/weekly-contributions.selector";
-import { loadWeeklyContributions } from "../../store/weekly-contributions/weekly-contributions.actions";
+import { setWeeklyContributions } from "../../store/weekly-contributions/weekly-contributions.actions";
+import { LeaderboardService } from "../../services/leaderboard.service";
+import { of, switchMap } from "rxjs";
 
 @Component({
   selector: "app-home",
@@ -17,7 +19,7 @@ import { loadWeeklyContributions } from "../../store/weekly-contributions/weekly
   imports: [AsyncPipe, HomeCardComponent, NgxEchartsDirective],
   templateUrl: "./home.component.html",
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   user$ = this.store.pipe(select(userSelector));
   weeklyContributionsLoaded$ = this.store.pipe(
     select(weeklyContributionsLoadedSelector),
@@ -25,13 +27,27 @@ export class HomeComponent {
   weeklyContributions$ = this.store.pipe(select(weeklyContributionsSelector));
   chartOptions?: EChartsOption;
 
-  constructor(private store: Store) {
-    // Load the weekly contributions if they are not loaded (One time only)
-    this.weeklyContributionsLoaded$.subscribe((loaded) => {
-      if (!loaded) {
-        this.store.dispatch(loadWeeklyContributions());
-      }
-    });
+  constructor(
+    private store: Store,
+    private leaderboard: LeaderboardService,
+  ) {}
+
+  async ngOnInit() {
+    this.user$ // Check if the user is loaded
+      .pipe(
+        switchMap((user) =>
+          user ? this.weeklyContributionsLoaded$ : of(true),
+        ),
+      )
+      .subscribe((loaded) => {
+        // Check if the weekly contributions are loaded
+        if (!loaded) {
+          this.leaderboard.getWeeklyContributions().then((data) => {
+            console.log(data);
+            this.store.dispatch(setWeeklyContributions(data));
+          });
+        }
+      });
 
     // Subscribe to the data till it's loaded
     this.weeklyContributions$.subscribe((data) => {
