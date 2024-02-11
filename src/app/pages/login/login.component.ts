@@ -4,8 +4,6 @@ import { ToastrService } from "ngx-toastr";
 import { Router } from "@angular/router";
 import { HeaderComponent } from "../../components/header/header.component";
 import { FooterComponent } from "../../components/footer/footer.component";
-import { Store } from "@ngrx/store";
-import { login } from "../../store/authentication/authentication.actions";
 
 @Component({
   selector: "app-login",
@@ -18,7 +16,6 @@ export class LoginComponent {
     private authenticationService: AuthenticationService,
     private toastr: ToastrService,
     private router: Router,
-    private store: Store,
   ) {}
 
   async login() {
@@ -40,9 +37,6 @@ export class LoginComponent {
       this.toastr.error("Authentication failed! Please try again.");
       return;
     }
-
-    // Dispatch the login action
-    this.store.dispatch(login(user));
 
     // Redirect to the home page
     this.router.navigate(["/"]);

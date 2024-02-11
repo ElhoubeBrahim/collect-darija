@@ -10,9 +10,10 @@ import { Router } from "@angular/router";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { Timestamp } from "@firebase/firestore";
-import { lastValueFrom, take } from "rxjs";
-import { Store } from "@ngrx/store";
+import { Observable, lastValueFrom, take } from "rxjs";
+import { Store, select } from "@ngrx/store";
 import { logout } from "../store/authentication/authentication.actions";
+import { userSelector } from "../store/authentication/authentication.selector";
 
 @Injectable({
   providedIn: "root",
@@ -74,7 +75,8 @@ export class AuthenticationService {
     if (!user.email) return null;
 
     // Get user data from the database
-    let userData = await this.getUser(user.uid);
+    let userData$ = this.getUser(user.uid);
+    let userData = await lastValueFrom(userData$);
 
     // If the user document does not exist, create a new user, otherwise update the existing user
     userData = this.initUser(userData || {});
@@ -89,25 +91,19 @@ export class AuthenticationService {
     return userData;
   }
 
-  async getUser(id: string): Promise<UserModel | null> {
+  getUser(id: string): Observable<UserModel | undefined> {
     // Get user document from the database
-    const userDoc$ = this.firestore
-      .collection("users")
-      .doc(id)
-      .get()
-      .pipe(take(1));
-    const userDoc = await lastValueFrom(userDoc$);
+    const userDoc$ = this.firestore.collection<UserModel>("users").doc(id);
 
-    // If the user document does not exist, return null
-    if (!userDoc.exists) return null;
-
-    // Otherwise, return the user data
-    return userDoc.data() as UserModel;
+    // Return the user document
+    return userDoc$.valueChanges();
   }
 
   async getCurrentUser(): Promise<UserModel | null> {
-    const user = await this.auth.currentUser;
-    return user ? this.getUser(user.uid) : null;
+    const user$ = this.store.pipe(select(userSelector), take(1));
+    const user = await lastValueFrom(user$);
+
+    return user;
   }
 
   async updateUser(user: UserModel): Promise<UserModel> {

@@ -4,6 +4,7 @@ import { RouterOutlet } from "@angular/router";
 import { AuthenticationService } from "./services/authentication.service";
 import { Store } from "@ngrx/store";
 import { login, logout } from "./store/authentication/authentication.actions";
+import { of, switchMap } from "rxjs";
 
 @Component({
   selector: "app-root",
@@ -19,13 +20,14 @@ export class AppComponent {
     private authentication: AuthenticationService,
     private store: Store,
   ) {
-    // Get the current user
-    this.auth.authState.subscribe(async (user) => {
-      // If the user is logged in, store the user data in the store
-      if (user) {
-        const userData = await this.authentication.getUser(user.uid);
-        this.store.dispatch(userData ? login(userData) : logout());
-      }
-    });
+    this.auth.authState
+      .pipe(
+        switchMap((user) =>
+          user ? this.authentication.getUser(user.uid) : of(null),
+        ),
+      )
+      .subscribe((data) => {
+        this.store.dispatch(data ? login(data) : logout());
+      });
   }
 }
