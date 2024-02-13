@@ -25,8 +25,6 @@ import {
 import { environment } from "../environments/environment.development";
 import { provideState, provideStore } from "@ngrx/store";
 import { provideStoreDevtools } from "@ngrx/store-devtools";
-import { FIREBASE_OPTIONS } from "@angular/fire/compat";
-import { USE_EMULATOR as USE_FIRESTORE_EMULATOR } from "@angular/fire/compat/firestore";
 import { authenticationReducer } from "./store/authentication/authentication.reducer";
 import { leaderboardReducer } from "./store/leaderboard/leaderboard.reducer";
 import { provideEcharts } from "ngx-echarts";
@@ -35,11 +33,6 @@ import { weeklyContributionsReducer } from "./store/weekly-contributions/weekly-
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    { provide: FIREBASE_OPTIONS, useValue: environment.firebaseConfig },
-    {
-      provide: USE_FIRESTORE_EMULATOR,
-      useValue: environment.useEmulators ? ["localhost", 8080] : undefined,
-    },
     importProvidersFrom(
       provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     ),
