@@ -6,12 +6,13 @@ import {
   Firestore,
   doc,
   getDoc,
+  onSnapshot,
   setDoc,
   updateDoc,
 } from "@angular/fire/firestore";
 import { Auth } from "@angular/fire/auth";
 import { Timestamp } from "@firebase/firestore";
-import { lastValueFrom, take } from "rxjs";
+import { Observable, lastValueFrom, take } from "rxjs";
 import { Store, select } from "@ngrx/store";
 import { logout } from "../store/authentication/authentication.actions";
 import { userSelector } from "../store/authentication/authentication.selector";
@@ -100,6 +101,17 @@ export class AuthenticationService {
     const userDocSnap = await getDoc(userDoc);
 
     return (userDocSnap.data() as UserModel) || null;
+  }
+
+  getUser$(id: string): Observable<UserModel | null> {
+    return new Observable((observer) => {
+      const userDoc = doc(this.firestore, "users", id);
+      const unsubscribe = onSnapshot(userDoc, (userDocSnap) => {
+        observer.next((userDocSnap.data() as UserModel) || null);
+      });
+
+      return () => unsubscribe();
+    });
   }
 
   async getCurrentUser(): Promise<UserModel | null> {

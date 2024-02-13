@@ -1,14 +1,9 @@
-import { Component } from "@angular/core";
-import { AngularFireAuth } from "@angular/fire/compat/auth";
+import { Component, OnInit } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
 import { AuthenticationService } from "./services/authentication.service";
 import { Store } from "@ngrx/store";
-import {
-  login,
-  logout,
-  setUser,
-} from "./store/authentication/authentication.actions";
-import { of, switchMap } from "rxjs";
+import { logout, setUser } from "./store/authentication/authentication.actions";
+import { Auth } from "@angular/fire/auth";
 
 @Component({
   selector: "app-root",
@@ -16,22 +11,26 @@ import { of, switchMap } from "rxjs";
   imports: [RouterOutlet],
   templateUrl: "./app.component.html",
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = "collect-darija";
 
   constructor(
-    private auth: AngularFireAuth,
+    private auth: Auth,
     private authentication: AuthenticationService,
     private store: Store,
-  ) {
-    this.auth.authState
-      .pipe(
-        switchMap((user) =>
-          user ? this.authentication.getUser(user.uid) : of(null),
-        ),
-      )
-      .subscribe((data) => {
+  ) {}
+
+  ngOnInit() {
+    this.auth.onAuthStateChanged((user) => {
+      if (!user) {
+        this.store.dispatch(logout());
+        return;
+      }
+
+      this.authentication.getUser$(user.uid).subscribe((data) => {
+        console.log(data);
         this.store.dispatch(data ? setUser(data) : logout());
       });
+    });
   }
 }
