@@ -3,10 +3,10 @@ import { HomeComponent } from "./pages/home/home.component";
 import { LoginComponent } from "./pages/login/login.component";
 import { LeaderboardComponent } from "./pages/leaderboard/leaderboard.component";
 import {
-  AngularFireAuthGuard,
+  canActivate,
   redirectLoggedInTo,
   redirectUnauthorizedTo,
-} from "@angular/fire/compat/auth-guard";
+} from "@angular/fire/auth-guard";
 import { MainComponent } from "./components/main/main.component";
 import { TranslateComponent } from "./pages/translate/translate.component";
 
@@ -14,8 +14,7 @@ export const routes: Routes = [
   {
     path: "",
     component: MainComponent,
-    canActivate: [AngularFireAuthGuard],
-    data: { authGuardPipe: () => redirectUnauthorizedTo(["login"]) },
+    ...canActivate(() => redirectUnauthorizedTo(["login"])),
     children: [
       {
         path: "",
@@ -39,7 +38,6 @@ export const routes: Routes = [
   {
     path: "login",
     component: LoginComponent,
-    canActivate: [AngularFireAuthGuard],
-    data: { authGuardPipe: () => redirectLoggedInTo([""]) },
+    ...canActivate(() => redirectLoggedInTo(["home"])),
   },
 ];
