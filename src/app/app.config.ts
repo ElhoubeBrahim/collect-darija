@@ -10,6 +10,11 @@ import { provideToastr } from "ngx-toastr";
 
 import { routes } from "./app.routes";
 import { initializeApp, provideFirebaseApp } from "@angular/fire/app";
+import {
+  connectFirestoreEmulator,
+  getFirestore,
+  provideFirestore,
+} from "@angular/fire/firestore";
 import { connectAuthEmulator, getAuth, provideAuth } from "@angular/fire/auth";
 import {
   getAnalytics,
@@ -47,6 +52,17 @@ export const appConfig: ApplicationConfig = {
         }
 
         return auth;
+      }),
+    ),
+    importProvidersFrom(
+      provideFirestore(() => {
+        const firestore = getFirestore();
+
+        if (environment.useEmulators) {
+          connectFirestoreEmulator(firestore, "localhost", 8080);
+        }
+
+        return firestore;
       }),
     ),
     importProvidersFrom(provideAnalytics(() => getAnalytics())),

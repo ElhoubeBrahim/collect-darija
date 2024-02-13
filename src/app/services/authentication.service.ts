@@ -1,16 +1,17 @@
 import { Injectable } from "@angular/core";
-import {
-  signInWithPopup,
-  getAuth,
-  GoogleAuthProvider,
-  User,
-} from "firebase/auth";
+import { signInWithPopup, GoogleAuthProvider, User } from "firebase/auth";
 import { User as UserModel } from "../models/users.model";
 import { Router } from "@angular/router";
-import { AngularFirestore } from "@angular/fire/compat/firestore";
-import { AngularFireAuth } from "@angular/fire/compat/auth";
+import {
+  Firestore,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+} from "@angular/fire/firestore";
+import { Auth } from "@angular/fire/auth";
 import { Timestamp } from "@firebase/firestore";
-import { Observable, lastValueFrom, take } from "rxjs";
+import { lastValueFrom, take } from "rxjs";
 import { Store, select } from "@ngrx/store";
 import { logout } from "../store/authentication/authentication.actions";
 import { userSelector } from "../store/authentication/authentication.selector";
@@ -20,8 +21,8 @@ import { userSelector } from "../store/authentication/authentication.selector";
 })
 export class AuthenticationService {
   constructor(
-    private auth: AngularFireAuth,
-    private firestore: AngularFirestore,
+    private auth: Auth,
+    private firestore: Firestore,
     private router: Router,
     private store: Store,
   ) {}
@@ -29,11 +30,10 @@ export class AuthenticationService {
   async login() {
     // Initialize the Google authentication provider
     const provider = new GoogleAuthProvider();
-    const auth = getAuth();
 
     try {
       // Sign in via popup
-      const result = await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(this.auth, provider);
       const credential = GoogleAuthProvider.credentialFromResult(result);
 
       // If the login was successful, return the user and the access token
@@ -74,29 +74,32 @@ export class AuthenticationService {
   async saveUser(user: User): Promise<UserModel | null> {
     if (!user.email) return null;
 
-    // Get user data from the database
-    let userData$ = this.getUser(user.uid);
-    let userData = await lastValueFrom(userData$);
+    // Get the user document from the database
+    const userDoc = doc(this.firestore, "users", user.uid);
+    const userDocSnap = await getDoc(userDoc);
 
     // If the user document does not exist, create a new user, otherwise update the existing user
-    userData = this.initUser(userData || {});
+    const userData = this.initUser(
+      userDocSnap.data() || {
+        id: user.uid,
+        email: user.email,
+        username: user.displayName,
+        picture: user.photoURL,
+      },
+    );
 
     // Save the user document to the database
-    await this.firestore
-      .collection("users")
-      .doc(user.uid)
-      .set(userData, { merge: true });
+    await setDoc(userDoc, userData, { merge: true });
 
     // Return the user data
     return userData;
   }
 
-  getUser(id: string): Observable<UserModel | undefined> {
-    // Get user document from the database
-    const userDoc$ = this.firestore.collection<UserModel>("users").doc(id);
+  async getUser(id: string): Promise<UserModel | null> {
+    const userDoc = doc(this.firestore, "users", id);
+    const userDocSnap = await getDoc(userDoc);
 
-    // Return the user document
-    return userDoc$.valueChanges();
+    return (userDocSnap.data() as UserModel) || null;
   }
 
   async getCurrentUser(): Promise<UserModel | null> {
@@ -106,15 +109,11 @@ export class AuthenticationService {
     return user;
   }
 
-  async updateUser(user: UserModel): Promise<UserModel> {
-    // Get the user document from the database
-    const userDoc = this.firestore.collection("users").doc(user.id);
+  async updateUser(user: Partial<UserModel>): Promise<void> {
+    if (!user.id) return;
 
-    // Update the user document
-    await userDoc.update(user);
-
-    // Return the updated user
-    return user;
+    const userDoc = doc(this.firestore, "users", user.id);
+    await updateDoc(userDoc, user);
   }
 
   initUser(user: Partial<UserModel>) {
