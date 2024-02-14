@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { Store, select } from "@ngrx/store";
 import { userSelector } from "../../store/authentication/authentication.selector";
 import { AsyncPipe, JsonPipe } from "@angular/common";
-import { RouterLink } from "@angular/router";
+import { RouterLink, Router, NavigationEnd } from "@angular/router";
 import { AuthenticationService } from "../../services/authentication.service";
 
 @Component({
@@ -18,14 +18,24 @@ export class HeaderComponent {
     links: [
       { icon: "home-7-line", label: "Home", route: "/home" },
       { icon: "translate", label: "Translate", route: "/translate" },
+      { icon: "history-line", label: "History", route: "/history" },
       { icon: "trophy-line", label: "Leaderboard", route: "/leaderboard" },
     ],
   };
+  currentRoute: string = "";
 
   constructor(
     private store: Store,
     private authentication: AuthenticationService,
-  ) {}
+    private router: Router,
+  ) {
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.currentRoute = event.url;
+        console.log(this.currentRoute);
+      }
+    });
+  }
 
   async logout() {
     if (confirm("Are you sure you want to log out?") === false) return;

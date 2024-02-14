@@ -5,6 +5,14 @@
         <img src="assets/logo.svg" alt="Collect Darija" class="h-[40px]" />
       </a>
       <div class="flex items-center gap-4">
+        @if (currentRoute !== "/translate") {
+          <a
+            routerLink="/translate"
+            class="cursor-pointer bg-primary text-white rounded-full py-2 px-4"
+            >Contribute</a
+          >
+        }
+
         <i class="ri-information-2-line ri-lg cursor-pointer"></i>
         @if (user$ | async; as user) {
           <div class="relative" (click)="toggleDropdown()">

@@ -69,6 +69,11 @@ export class TranslateComponent {
       : this.toastr.info("No sentences to translate at the moment.");
   }
 
+  async skipSentence() {
+    this.loadNewSentence();
+    this.toastr.info("Sentence skipped successfully.");
+  }
+
   async submitTranslation() {
     // Validate the translation data
     if (this.translation.length == 0 || this.limitReached()) {
