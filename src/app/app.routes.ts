@@ -2,6 +2,7 @@ import { Routes } from "@angular/router";
 import { HomeComponent } from "./pages/home/home.component";
 import { LoginComponent } from "./pages/login/login.component";
 import { LeaderboardComponent } from "./pages/leaderboard/leaderboard.component";
+import { HistoryComponent } from "./pages/history/history.component";
 import {
   AngularFireAuthGuard,
   redirectLoggedInTo,
@@ -33,6 +34,10 @@ export const routes: Routes = [
       {
         path: "translate",
         component: TranslateComponent,
+      },
+      {
+        path: "history",
+        component: HistoryComponent,
       },
     ],
   },
