@@ -26,6 +26,7 @@ import { authenticationReducer } from "./store/authentication/authentication.red
 import { leaderboardReducer } from "./store/leaderboard/leaderboard.reducer";
 import { provideEffects } from "@ngrx/effects";
 import { LeaderboardEffects } from "./store/leaderboard/leaderboard.effects";
+import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -65,5 +66,6 @@ export const appConfig: ApplicationConfig = {
     }),
     provideEffects(LeaderboardEffects),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
+    provideAnimationsAsync("noop"),
   ],
 };

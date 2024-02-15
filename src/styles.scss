@@ -1,3 +1,24 @@
+@use "@angular/material" as mat;
+
+@include mat.core();
+
+$collect-darija-primary: mat.define-palette(mat.$indigo-palette);
+$collect-darija-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+
+$collect-darija-warn: mat.define-palette(mat.$red-palette);
+
+$collect-darija-theme: mat.define-light-theme(
+  (
+    color: (
+      primary: $collect-darija-primary,
+      accent: $collect-darija-accent,
+      warn: $collect-darija-warn,
+    ),
+  )
+);
+
+@include mat.all-component-themes($collect-darija-theme);
+
 @import url("https://fonts.googleapis.com/css2?family=Outfit&display=swap");
 
 @tailwind base;
