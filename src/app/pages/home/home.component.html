@@ -1,7 +1,46 @@
-<h1>Welcome to Collect Darija</h1>
+<h2 class="font-semibold text-2xl mb-10">
+  Welcome
+  @if (user$ | async; as user) {
+    <span class="text-primary">{{ user.username }}</span>
+  }
+</h2>
 
 @if (user$ | async; as user) {
-  <p>{{ user.username }}</p>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+    <app-home-card
+      icon="ri-translate"
+      title="Translations"
+      color="#F39C12"
+      [number]="user.stats.translations"
+      link="/translate"
+    />
+    <app-home-card
+      icon="ri-chat-check-line"
+      title="Validated translations"
+      color="#3498DB"
+      [number]="user.stats.validatedTranslations"
+      link="/translate"
+    />
+    <app-home-card
+      icon="ri-mic-line"
+      title="Recordings"
+      color="#EB5757"
+      [number]="user.stats.recordings"
+      link="/translate"
+    />
+    <app-home-card
+      icon="ri-check-double-line"
+      title="Validated recordings"
+      color="#27AE60"
+      [number]="user.stats.validatedRecordings"
+      link="/translate"
+    />
+  </div>
 }
 
-<button (click)="logout()">Logout</button>
+@if (chartOptions) {
+  <div class="p-8 border border-muted shadow rounded-md h-full lg:w-1/2">
+    <h3 class="font-semibold text-xl mb-4">Weekly contributions</h3>
+    <div echarts [options]="chartOptions" class="demo-chart"></div>
+  </div>
+}

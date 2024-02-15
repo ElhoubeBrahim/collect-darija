@@ -10,6 +10,11 @@ import { provideToastr } from "ngx-toastr";
 
 import { routes } from "./app.routes";
 import { initializeApp, provideFirebaseApp } from "@angular/fire/app";
+import {
+  connectFirestoreEmulator,
+  getFirestore,
+  provideFirestore,
+} from "@angular/fire/firestore";
 import { connectAuthEmulator, getAuth, provideAuth } from "@angular/fire/auth";
 import {
   getAnalytics,
@@ -20,22 +25,15 @@ import {
 import { environment } from "../environments/environment.development";
 import { provideState, provideStore } from "@ngrx/store";
 import { provideStoreDevtools } from "@ngrx/store-devtools";
-import { FIREBASE_OPTIONS } from "@angular/fire/compat";
-import { USE_EMULATOR as USE_FIRESTORE_EMULATOR } from "@angular/fire/compat/firestore";
 import { authenticationReducer } from "./store/authentication/authentication.reducer";
 import { leaderboardReducer } from "./store/leaderboard/leaderboard.reducer";
-import { provideEffects } from "@ngrx/effects";
-import { LeaderboardEffects } from "./store/leaderboard/leaderboard.effects";
+import { provideEcharts } from "ngx-echarts";
+import { weeklyContributionsReducer } from "./store/weekly-contributions/weekly-contributions.reducer";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    { provide: FIREBASE_OPTIONS, useValue: environment.firebaseConfig },
-    {
-      provide: USE_FIRESTORE_EMULATOR,
-      useValue: environment.useEmulators ? ["localhost", 8080] : undefined,
-    },
     importProvidersFrom(
       provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     ),
@@ -48,6 +46,17 @@ export const appConfig: ApplicationConfig = {
         }
 
         return auth;
+      }),
+    ),
+    importProvidersFrom(
+      provideFirestore(() => {
+        const firestore = getFirestore();
+
+        if (environment.useEmulators) {
+          connectFirestoreEmulator(firestore, "localhost", 8080);
+        }
+
+        return firestore;
       }),
     ),
     importProvidersFrom(provideAnalytics(() => getAnalytics())),
@@ -64,8 +73,12 @@ export const appConfig: ApplicationConfig = {
       name: "leaderboard",
       reducer: leaderboardReducer,
     }),
-    provideEffects(LeaderboardEffects),
+    provideState({
+      name: "weekly-contributions",
+      reducer: weeklyContributionsReducer,
+    }),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
+    provideEcharts(),
     provideAnimationsAsync("noop"),
   ],
 };

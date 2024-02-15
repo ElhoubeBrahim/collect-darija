@@ -1,26 +1,29 @@
 import { Injectable } from "@angular/core";
-import {
-  signInWithPopup,
-  getAuth,
-  GoogleAuthProvider,
-  User,
-} from "firebase/auth";
+import { signInWithPopup, GoogleAuthProvider, User } from "firebase/auth";
 import { User as UserModel } from "../models/users.model";
 import { Router } from "@angular/router";
-import { AngularFirestore } from "@angular/fire/compat/firestore";
-import { AngularFireAuth } from "@angular/fire/compat/auth";
+import {
+  Firestore,
+  doc,
+  getDoc,
+  onSnapshot,
+  setDoc,
+  updateDoc,
+} from "@angular/fire/firestore";
+import { Auth } from "@angular/fire/auth";
 import { Timestamp } from "@firebase/firestore";
-import { lastValueFrom, take } from "rxjs";
-import { Store } from "@ngrx/store";
+import { Observable, lastValueFrom, take } from "rxjs";
+import { Store, select } from "@ngrx/store";
 import { logout } from "../store/authentication/authentication.actions";
+import { userSelector } from "../store/authentication/authentication.selector";
 
 @Injectable({
   providedIn: "root",
 })
 export class AuthenticationService {
   constructor(
-    private auth: AngularFireAuth,
-    private firestore: AngularFirestore,
+    private auth: Auth,
+    private firestore: Firestore,
     private router: Router,
     private store: Store,
   ) {}
@@ -28,11 +31,10 @@ export class AuthenticationService {
   async login() {
     // Initialize the Google authentication provider
     const provider = new GoogleAuthProvider();
-    const auth = getAuth();
 
     try {
       // Sign in via popup
-      const result = await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(this.auth, provider);
       const credential = GoogleAuthProvider.credentialFromResult(result);
 
       // If the login was successful, return the user and the access token
@@ -73,62 +75,75 @@ export class AuthenticationService {
   async saveUser(user: User): Promise<UserModel | null> {
     if (!user.email) return null;
 
-    // Get user data from the database
-    let userData = await this.getUser(user.uid);
+    // Get the user document from the database
+    const userDoc = doc(this.firestore, "users", user.uid);
+    const userDocSnap = await getDoc(userDoc);
 
     // If the user document does not exist, create a new user, otherwise update the existing user
-    userData = {
-      id: user.uid,
-      username: user.displayName || "Unknown",
-      picture: user.photoURL || "assets/user.png",
-      email: user.email,
-      score: userData?.score || 0,
-      scoreUpdatedAt:
-        userData?.scoreUpdatedAt || Timestamp.fromDate(new Date()),
-      translationsCount: userData?.translationsCount || 0,
-      createdAt: userData?.createdAt || Timestamp.fromDate(new Date()),
-      lastLoginAt: Timestamp.fromDate(new Date()),
-    };
+    const userData = this.initUser(
+      userDocSnap.data() || {
+        id: user.uid,
+        email: user.email,
+        username: user.displayName,
+        picture: user.photoURL,
+      },
+    );
 
     // Save the user document to the database
-    await this.firestore
-      .collection("users")
-      .doc(user.uid)
-      .set(userData, { merge: true });
+    await setDoc(userDoc, userData, { merge: true });
 
     // Return the user data
     return userData;
   }
 
   async getUser(id: string): Promise<UserModel | null> {
-    // Get user document from the database
-    const userDoc$ = this.firestore
-      .collection("users")
-      .doc(id)
-      .get()
-      .pipe(take(1));
-    const userDoc = await lastValueFrom(userDoc$);
+    const userDoc = doc(this.firestore, "users", id);
+    const userDocSnap = await getDoc(userDoc);
 
-    // If the user document does not exist, return null
-    if (!userDoc.exists) return null;
+    return (userDocSnap.data() as UserModel) || null;
+  }
 
-    // Otherwise, return the user data
-    return userDoc.data() as UserModel;
+  getUser$(id: string): Observable<UserModel | null> {
+    return new Observable((observer) => {
+      const userDoc = doc(this.firestore, "users", id);
+      const unsubscribe = onSnapshot(userDoc, (userDocSnap) => {
+        observer.next((userDocSnap.data() as UserModel) || null);
+      });
+
+      return () => unsubscribe();
+    });
   }
 
   async getCurrentUser(): Promise<UserModel | null> {
-    const user = await this.auth.currentUser;
-    return user ? this.getUser(user.uid) : null;
+    const user$ = this.store.pipe(select(userSelector), take(1));
+    const user = await lastValueFrom(user$);
+
+    return user;
   }
 
-  async updateUser(user: UserModel): Promise<UserModel> {
-    // Get the user document from the database
-    const userDoc = this.firestore.collection("users").doc(user.id);
+  async updateUser(user: Partial<UserModel>): Promise<void> {
+    if (!user.id) return;
 
-    // Update the user document
-    await userDoc.update(user);
+    const userDoc = doc(this.firestore, "users", user.id);
+    await updateDoc(userDoc, user);
+  }
 
-    // Return the updated user
-    return user;
+  initUser(user: Partial<UserModel>) {
+    return {
+      id: user.id || "",
+      username: user.username || "Unknown",
+      picture: user.picture || "assets/user.png",
+      email: user.email || "",
+      score: user.score || 0,
+      scoreUpdatedAt: user.scoreUpdatedAt || Timestamp.fromDate(new Date()),
+      stats: user.stats || {
+        translations: 0,
+        validatedTranslations: 0,
+        recordings: 0,
+        validatedRecordings: 0,
+      },
+      createdAt: user.createdAt || Timestamp.fromDate(new Date()),
+      lastLoginAt: user.lastLoginAt || Timestamp.fromDate(new Date()),
+    };
   }
 }

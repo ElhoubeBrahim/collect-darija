@@ -1,9 +1,9 @@
-import { Component } from "@angular/core";
-import { AngularFireAuth } from "@angular/fire/compat/auth";
+import { Component, OnInit } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
 import { AuthenticationService } from "./services/authentication.service";
 import { Store } from "@ngrx/store";
-import { login, logout } from "./store/authentication/authentication.actions";
+import { logout, setUser } from "./store/authentication/authentication.actions";
+import { Auth } from "@angular/fire/auth";
 
 @Component({
   selector: "app-root",
@@ -11,21 +11,26 @@ import { login, logout } from "./store/authentication/authentication.actions";
   imports: [RouterOutlet],
   templateUrl: "./app.component.html",
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = "collect-darija";
 
   constructor(
-    private auth: AngularFireAuth,
+    private auth: Auth,
     private authentication: AuthenticationService,
     private store: Store,
-  ) {
-    // Get the current user
-    this.auth.authState.subscribe(async (user) => {
-      // If the user is logged in, store the user data in the store
-      if (user) {
-        const userData = await this.authentication.getUser(user.uid);
-        this.store.dispatch(userData ? login(userData) : logout());
+  ) {}
+
+  ngOnInit() {
+    this.auth.onAuthStateChanged((user) => {
+      if (!user) {
+        this.store.dispatch(logout());
+        return;
       }
+
+      this.authentication.getUser$(user.uid).subscribe((data) => {
+        console.log(data);
+        this.store.dispatch(data ? setUser(data) : logout());
+      });
     });
   }
 }

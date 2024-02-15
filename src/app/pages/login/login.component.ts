@@ -42,7 +42,7 @@ export class LoginComponent {
     }
 
     // Dispatch the login action
-    this.store.dispatch(login(user));
+    this.store.dispatch(login());
 
     // Redirect to the home page
     this.router.navigate(["/"]);

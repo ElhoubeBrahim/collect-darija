@@ -87,7 +87,7 @@ async function seedTranslations() {
         .collection("users")
         .doc(translation.userId)
         .update({
-          translationsCount: admin.firestore.FieldValue.increment(1),
+          "stats.translations": admin.firestore.FieldValue.increment(1),
           score: admin.firestore.FieldValue.increment(10),
           scoreUpdatedAt: admin.firestore.Timestamp.fromDate(new Date()),
         });
