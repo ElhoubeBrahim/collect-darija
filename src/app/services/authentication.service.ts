@@ -98,13 +98,6 @@ export class AuthenticationService {
     return userData;
   }
 
-  async getUser(id: string): Promise<UserModel | null> {
-    const userDoc = doc(this.firestore, "users", id);
-    const userDocSnap = await getDoc(userDoc);
-
-    return (userDocSnap.data() as UserModel) || null;
-  }
-
   getUser$(id: string): Observable<UserModel | null> {
     return new Observable((observer) => {
       const userDoc = doc(this.firestore, "users", id);
