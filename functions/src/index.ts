@@ -3,6 +3,8 @@ import { onRequest } from "firebase-functions/v2/https";
 
 import * as express from "express";
 import * as admin from "firebase-admin";
+import { Timestamp } from "firebase-admin/firestore";
+import { FieldValue } from "firebase-admin/firestore";
 import { authorizeRequest, getTopUsers, getUserRanking } from "./helpers";
 
 // Initialize the Firebase Admin SDK
@@ -94,6 +96,87 @@ app.get("/weekly-contributions", async (req: Request, res: Response) => {
   }
 
   res.json(contributions.reverse());
+});
+
+app.post("/translate", async (req: Request, res: Response) => {
+  // @ts-ignore
+  const user = req.user;
+  const data = req.body;
+
+  // Validate the request
+  if (
+    !data.sentenceId ||
+    !data.translation ||
+    data.translation.trim().length === 0
+  ) {
+    res.status(400).json({ message: "Invalid request" });
+    return;
+  }
+
+  // Get the sentence
+  const sentenceDoc = await admin
+    .firestore()
+    .collection("sentences")
+    .doc(data.sentenceId)
+    .get();
+  const sentence = sentenceDoc.data();
+  if (!sentence) {
+    res.status(404).json({ message: "Sentence not found" });
+    return;
+  }
+
+  // Check if sentence is already translated by the user
+  const translationQuery = await admin
+    .firestore()
+    .collection("translations")
+    .where("userId", "==", user.id)
+    .where("sentenceId", "==", sentence.id)
+    .get();
+  if (!translationQuery.empty) {
+    res.status(400).json({ message: "Sentence already translated" });
+    return;
+  }
+
+  // Create a new translation
+  const translation = {
+    id: admin.firestore().collection("translations").doc().id,
+    userId: user.id,
+    sentenceId: sentence.id,
+    translation: data.translation.trim(),
+    translatedAt: Timestamp.fromDate(new Date()),
+  };
+
+  // Start a Firestore transaction
+  await admin.firestore().runTransaction(async (transaction) => {
+    // Save the translation
+    const translationDoc = admin
+      .firestore()
+      .collection("translations")
+      .doc(translation.id);
+    transaction.set(translationDoc, translation);
+
+    // Update the sentence translations count
+    const sentenceDoc = admin
+      .firestore()
+      .collection("sentences")
+      .doc(sentence.id);
+    transaction.update(sentenceDoc, {
+      translationsCount: FieldValue.increment(1),
+    });
+
+    // Update user translations count & score
+    const userDoc = admin.firestore().collection("users").doc(user.id);
+    transaction.update(userDoc, {
+      "stats.translations": FieldValue.increment(1),
+      score: FieldValue.increment(10),
+      scoreUpdatedAt: Timestamp.fromDate(new Date()),
+    });
+  });
+
+  res.json({
+    message: "Translation saved",
+    translation,
+  });
 });
 
 export const api = onRequest(app);
