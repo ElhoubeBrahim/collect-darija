@@ -78,19 +78,21 @@ export class AuthenticationService {
     // Get the user document from the database
     const userDoc = doc(this.firestore, "users", user.uid);
     const userDocSnap = await getDoc(userDoc);
+    let userData = userDocSnap.data() as UserModel;
 
-    // If the user document does not exist, create a new user, otherwise update the existing user
-    const userData = this.initUser(
-      userDocSnap.data() || {
-        id: user.uid,
-        email: user.email,
-        username: user.displayName,
-        picture: user.photoURL,
-      },
-    );
+    if (!userDocSnap.exists()) {
+      userData = this.initUser(
+        userDocSnap.data() || {
+          id: user.uid,
+          email: user.email,
+          username: user.displayName,
+          picture: user.photoURL,
+        },
+      );
 
-    // Save the user document to the database
-    await setDoc(userDoc, userData, { merge: true });
+      // Save the user document to the database
+      await setDoc(userDoc, userData, { merge: true });
+    }
 
     // Return the user data
     return userData;
