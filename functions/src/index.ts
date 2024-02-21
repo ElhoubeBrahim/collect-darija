@@ -125,6 +125,23 @@ app.get("/sentence", async (req: Request, res: Response) => {
   res.json({ sentence });
 });
 
+app.get("/history", async (req: Request, res: Response) => {
+  // @ts-ignore
+  const user = req.user;
+
+  // Get the translations
+  const translationsQuery = await admin
+    .firestore()
+    .collection("translations")
+    .where("userId", "==", user.id)
+    .orderBy("translatedAt", "desc")
+    .limit(10)
+    .get();
+  const translations = translationsQuery.docs.map((doc) => doc.data());
+
+  res.json(translations);
+});
+
 app.post("/translate", async (req: Request, res: Response) => {
   // @ts-ignore
   const user = req.user;
@@ -169,7 +186,10 @@ app.post("/translate", async (req: Request, res: Response) => {
   const translation = {
     id: admin.firestore().collection("translations").doc().id,
     userId: user.id,
-    sentenceId: sentence.id,
+    sentence: {
+      id: sentence.id,
+      content: sentence.content,
+    },
     translation: data.translation.trim(),
     translatedAt: Timestamp.fromDate(new Date()),
   };
