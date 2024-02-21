@@ -98,6 +98,33 @@ app.get("/weekly-contributions", async (req: Request, res: Response) => {
   res.json(contributions.reverse());
 });
 
+app.get("/sentence", async (req: Request, res: Response) => {
+  // @ts-ignore
+  const user = req.user;
+
+  // Get a random sentence
+  const key = admin.firestore().collection("sentences").doc().id;
+  let sentencesQuery = await admin
+    .firestore()
+    .collection("sentences")
+    .where("id", ">=", key)
+    .limit(1)
+    .get();
+  if (sentencesQuery.empty) {
+    // If no sentence found, get the first one in the other direction
+    sentencesQuery = await admin
+      .firestore()
+      .collection("sentences")
+      .where("id", "<", key)
+      .limit(1)
+      .get();
+  }
+
+  // Return the sentence
+  const sentence = sentencesQuery.docs.map((doc) => doc.data())[0];
+  res.json({ sentence });
+});
+
 app.post("/translate", async (req: Request, res: Response) => {
   // @ts-ignore
   const user = req.user;
@@ -125,17 +152,18 @@ app.post("/translate", async (req: Request, res: Response) => {
     return;
   }
 
+  // This is disabled because the user can translate the same sentence multiple times
   // Check if sentence is already translated by the user
-  const translationQuery = await admin
-    .firestore()
-    .collection("translations")
-    .where("userId", "==", user.id)
-    .where("sentenceId", "==", sentence.id)
-    .get();
-  if (!translationQuery.empty) {
-    res.status(400).json({ message: "Sentence already translated" });
-    return;
-  }
+  // const translationQuery = await admin
+  //   .firestore()
+  //   .collection("translations")
+  //   .where("userId", "==", user.id)
+  //   .where("sentenceId", "==", sentence.id)
+  //   .get();
+  // if (!translationQuery.empty) {
+  //   res.status(400).json({ message: "Sentence already translated" });
+  //   return;
+  // }
 
   // Create a new translation
   const translation = {
