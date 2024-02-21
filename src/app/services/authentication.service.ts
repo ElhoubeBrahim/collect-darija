@@ -121,13 +121,6 @@ export class AuthenticationService {
     return user;
   }
 
-  async updateUser(user: Partial<UserModel>): Promise<void> {
-    if (!user.id) return;
-
-    const userDoc = doc(this.firestore, "users", user.id);
-    await updateDoc(userDoc, user);
-  }
-
   initUser(user: Partial<UserModel>) {
     return {
       id: user.id || "",
