@@ -16,7 +16,6 @@ const app = express();
 app.use(express.json());
 app.use(authorizeRequest);
 
-// Create PayPal order route
 app.get("/leaderboard", async (req: Request, res: Response) => {
   // @ts-ignore
   const user = req.user;
@@ -53,6 +52,48 @@ app.get("/leaderboard", async (req: Request, res: Response) => {
   res.json({
     leaderboard,
   });
+});
+
+app.get("/weekly-contributions", async (req: Request, res: Response) => {
+  // @ts-ignore
+  const user = req.user;
+
+  // Get the current date
+  const now = new Date();
+  const range = [
+    new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7),
+    new Date(now.getFullYear(), now.getMonth(), now.getDate()),
+  ];
+
+  // Get the translations
+  const translationsQuery = await admin
+    .firestore()
+    .collection("translations")
+    .where("userId", "==", user.id)
+    .where("translatedAt", ">=", range[0])
+    .where(
+      "translatedAt",
+      "<=",
+      new Date(range[1].getTime() + 24 * 60 * 60 * 1000),
+    )
+    .get();
+  const translations = translationsQuery.docs.map((doc) => doc.data());
+
+  // Count contributions
+  const contributions = [];
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+    contributions.push({
+      day: date,
+      value: translations.filter(
+        (translation) =>
+          translation.translatedAt.toDate().toDateString() ===
+          date.toDateString(),
+      ).length,
+    });
+  }
+
+  res.json(contributions.reverse());
 });
 
 export const api = onRequest(app);
