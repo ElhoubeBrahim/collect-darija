@@ -60,7 +60,10 @@ export class TranslationService {
     const translationData: Translation = {
       id: doc(collection(this.firestore, "translations")).id, // Generate a new id
       userId: user.id,
-      sentenceId: sentence.id,
+      sentence: {
+        id: sentence.id,
+        content: sentence.content,
+      },
       translation,
       translatedAt: Timestamp.fromDate(new Date()),
     };

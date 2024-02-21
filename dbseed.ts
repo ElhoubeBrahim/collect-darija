@@ -65,7 +65,10 @@ async function seedTranslations() {
       const translation = {
         id: faker.string.alphanumeric(20),
         userId: faker.helpers.arrayElement(users).id,
-        sentenceId: sentence.id,
+        sentence: {
+          id: sentence.id,
+          content: sentence.content,
+        },
         translation: faker.lorem.sentence({ min: 5, max: 20 }),
         translatedAt: admin.firestore.Timestamp.fromDate(new Date()),
       };
