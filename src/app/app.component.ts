@@ -28,7 +28,6 @@ export class AppComponent implements OnInit {
       }
 
       this.authentication.getUser$(user.uid).subscribe((data) => {
-        console.log(data);
         this.store.dispatch(data ? setUser(data) : logout());
       });
     });

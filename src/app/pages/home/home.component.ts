@@ -43,7 +43,6 @@ export class HomeComponent implements OnInit {
         // Check if the weekly contributions are loaded
         if (!loaded) {
           this.leaderboard.getWeeklyContributions().then((data) => {
-            console.log(data);
             this.store.dispatch(setWeeklyContributions(data));
           });
         }
