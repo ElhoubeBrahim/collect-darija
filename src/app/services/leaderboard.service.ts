@@ -18,10 +18,10 @@ export class LeaderboardService {
     return data.leaderboard;
   }
 
-  async getWeeklyContributions(): Promise<{ day: Date; value: number }[]> {
+  async getWeeklyContributions(): Promise<{ day: string; value: number }[]> {
     const observable$ = this.http.get("/weekly-contributions");
     const data = (await lastValueFrom(observable$)) as {
-      day: Date;
+      day: string;
       value: number;
     }[];
 

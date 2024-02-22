@@ -12,6 +12,7 @@ import {
 import { setWeeklyContributions } from "../../store/weekly-contributions/weekly-contributions.actions";
 import { LeaderboardService } from "../../services/leaderboard.service";
 import { of, switchMap } from "rxjs";
+import dayjs from "dayjs";
 
 @Component({
   selector: "app-home",
@@ -56,10 +57,10 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  getChartOptions(data: { day: Date; value: number }[]): EChartsOption {
+  getChartOptions(data: { day: string; value: number }[]): EChartsOption {
     return {
       xAxis: {
-        data: data.map((d) => d.day.toString().slice(0, 3).toUpperCase()),
+        data: data.map((d) => dayjs(d.day).format("ddd").toUpperCase()),
         silent: false,
         splitLine: {
           show: false,
@@ -68,7 +69,9 @@ export class HomeComponent implements OnInit {
           show: false,
         },
       },
-      yAxis: {},
+      yAxis: {
+        minInterval: 1,
+      },
       series: [
         {
           type: "bar",

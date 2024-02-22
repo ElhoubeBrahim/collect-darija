@@ -2,7 +2,7 @@ import { createReducer, on } from "@ngrx/store";
 import { setWeeklyContributions } from "./weekly-contributions.actions";
 
 export interface WeeklyContributionsState {
-  data: { day: Date; value: number }[];
+  data: { day: string; value: number }[];
   loaded: boolean;
 }
 

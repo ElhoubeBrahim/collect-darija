@@ -5,7 +5,7 @@ export const WEEKLY_CONTRIBUTIONS_SET =
 
 export const setWeeklyContributions = createAction(
   WEEKLY_CONTRIBUTIONS_SET,
-  (data: { day: Date; value: number }[]) => ({
+  (data: { day: string; value: number }[]) => ({
     data,
   }),
 );
