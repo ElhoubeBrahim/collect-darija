@@ -1,21 +1,13 @@
 import { Injectable } from "@angular/core";
 import { UserWithRanking } from "../models/users.model";
 import { lastValueFrom } from "rxjs";
-import { AuthenticationService } from "./authentication.service";
-import { Translation } from "../models/translations.model";
-import { Firestore } from "@angular/fire/firestore";
-import { collection, getDocs, query, where } from "firebase/firestore";
 import { HttpClient } from "@angular/common/http";
 
 @Injectable({
   providedIn: "root",
 })
 export class LeaderboardService {
-  constructor(
-    private firestore: Firestore,
-    private authentication: AuthenticationService,
-    private http: HttpClient,
-  ) {}
+  constructor(private http: HttpClient) {}
 
   async getLeaderboard(): Promise<UserWithRanking[]> {
     const observable$ = this.http.get("/leaderboard");
