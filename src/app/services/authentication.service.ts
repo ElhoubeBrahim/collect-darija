@@ -116,6 +116,10 @@ export class AuthenticationService {
     return user;
   }
 
+  getAccessToken(): string | null {
+    return localStorage.getItem("accessToken");
+  }
+
   initUser(user: Partial<UserModel>) {
     return {
       id: user.id || "",

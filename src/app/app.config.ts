@@ -30,6 +30,11 @@ import { leaderboardReducer } from "./store/leaderboard/leaderboard.reducer";
 import { provideEcharts } from "ngx-echarts";
 import { weeklyContributionsReducer } from "./store/weekly-contributions/weekly-contributions.reducer";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
+import {
+  provideHttpClient,
+  withFetch,
+  withInterceptors,
+} from "@angular/common/http";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -80,5 +85,28 @@ export const appConfig: ApplicationConfig = {
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
     provideEcharts(),
     provideAnimationsAsync("noop"),
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([
+        (req, next) => {
+          // Get the access token from local storage
+          const accessToken = localStorage.getItem("accessToken");
+          if (accessToken) {
+            req = req.clone({
+              headers: req.headers.set(
+                "Authorization",
+                `Bearer ${accessToken}`,
+              ),
+            });
+          }
+
+          // Add the API base URL to the request
+          req = req.clone({
+            url: `${environment.apiURL}${req.url}`,
+          });
+          return next(req);
+        },
+      ]),
+    ),
   ],
 };
