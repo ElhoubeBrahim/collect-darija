@@ -1,30 +1,15 @@
 import { Injectable } from "@angular/core";
 import { Sentence } from "../models/sentences.model";
-import { AuthenticationService } from "./authentication.service";
-import { ToastrService } from "ngx-toastr";
 import { Translation } from "../models/translations.model";
-import {
-  Firestore,
-  collection,
-  getDocs,
-  limit,
-  orderBy,
-  query,
-  where,
-} from "@angular/fire/firestore";
 import { HttpClient } from "@angular/common/http";
 import { lastValueFrom } from "rxjs";
+import { Timestamp } from "firebase/firestore";
 
 @Injectable({
   providedIn: "root",
 })
 export class TranslationService {
-  constructor(
-    private firestore: Firestore,
-    private authentication: AuthenticationService,
-    private toastr: ToastrService,
-    private http: HttpClient,
-  ) {}
+  constructor(private http: HttpClient) {}
 
   async getSentenceToTranslate(): Promise<Sentence | null> {
     const observable$ = this.http.get("/sentence");
@@ -43,22 +28,18 @@ export class TranslationService {
     await lastValueFrom(observable$); // To make the request
   }
 
-  async getTranslationsHistory(count = 10): Promise<Translation[]> {
-    const user = await this.authentication.getCurrentUser();
-    if (!user) {
-      this.toastr.error("Please login to view translations history!");
-      return [];
-    }
+  async getTranslationsHistory(): Promise<Translation[]> {
+    const observable$ = this.http.get("/history");
+    const data = (await lastValueFrom(observable$)) as Translation[];
 
-    const translationsCollection = collection(this.firestore, "translations");
-    const q = query(
-      translationsCollection,
-      where("userId", "==", user.id),
-      orderBy("translatedAt", "desc"),
-      limit(count),
-    );
-
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => doc.data() as Translation);
+    return data.map((translation) => {
+      return {
+        ...translation,
+        translatedAt: new Timestamp(
+          translation.translatedAt.seconds,
+          translation.translatedAt.nanoseconds,
+        ),
+      };
+    });
   }
 }

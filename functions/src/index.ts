@@ -138,7 +138,16 @@ app.get("/history", async (req: Request, res: Response) => {
     .orderBy("translatedAt", "desc")
     .limit(10)
     .get();
-  const translations = translationsQuery.docs.map((doc) => doc.data());
+  const translations = translationsQuery.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      ...data,
+      translatedAt: {
+        seconds: data.translatedAt.seconds,
+        nanoseconds: data.translatedAt.nanoseconds,
+      },
+    };
+  });
 
   res.json(translations);
 });
