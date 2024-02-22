@@ -16,6 +16,8 @@ import {
   runTransaction,
   where,
 } from "@angular/fire/firestore";
+import { HttpClient } from "@angular/common/http";
+import { lastValueFrom } from "rxjs";
 
 @Injectable({
   providedIn: "root",
@@ -25,27 +27,16 @@ export class TranslationService {
     private firestore: Firestore,
     private authentication: AuthenticationService,
     private toastr: ToastrService,
+    private http: HttpClient,
   ) {}
 
   async getSentenceToTranslate(): Promise<Sentence | null> {
-    // Get sentences collection
-    const sentencesCollection = collection(this.firestore, "sentences");
+    const observable$ = this.http.get("/sentence");
+    const data = (await lastValueFrom(observable$)) as {
+      sentence: Sentence | null;
+    };
 
-    // Get the sentences ordered by translations count
-    const q = query(
-      sentencesCollection,
-      orderBy("translationsCount", "asc"),
-      limit(10),
-    );
-    const querySnapshot = await getDocs(q);
-
-    // Shuffle the sentences
-    const sentences = querySnapshot.docs
-      .map((doc) => doc.data() as Sentence)
-      .sort(() => Math.random() - 0.5);
-
-    // Return the first sentence
-    return sentences.length > 0 ? sentences[0] : null;
+    return data.sentence;
   }
 
   async translateSentence(sentence: Sentence, translation: string) {

@@ -3,6 +3,7 @@ import { onRequest } from "firebase-functions/v2/https";
 
 import * as express from "express";
 import * as admin from "firebase-admin";
+import * as uuid from "uuid";
 import { Timestamp } from "firebase-admin/firestore";
 import { FieldValue } from "firebase-admin/firestore";
 import { authorizeRequest, getTopUsers, getUserRanking } from "./helpers";
@@ -103,7 +104,7 @@ app.get("/sentence", async (req: Request, res: Response) => {
   const user = req.user;
 
   // Get a random sentence
-  const key = admin.firestore().collection("sentences").doc().id;
+  const key = uuid.v4();
   let sentencesQuery = await admin
     .firestore()
     .collection("sentences")
