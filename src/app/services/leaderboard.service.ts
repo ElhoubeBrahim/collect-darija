@@ -1,95 +1,29 @@
 import { Injectable } from "@angular/core";
-import { User, UserWithRanking } from "../models/users.model";
-import { Observable, lastValueFrom } from "rxjs";
+import { UserWithRanking } from "../models/users.model";
+import { lastValueFrom } from "rxjs";
 import { AuthenticationService } from "./authentication.service";
 import { Translation } from "../models/translations.model";
 import { Firestore } from "@angular/fire/firestore";
-import {
-  collection,
-  getDocs,
-  limit,
-  onSnapshot,
-  orderBy,
-  query,
-  where,
-} from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { HttpClient } from "@angular/common/http";
 
 @Injectable({
   providedIn: "root",
 })
 export class LeaderboardService {
-  private LEADERBOARD_SIZE = 10;
-  private MAX_DOCUMENTS = 1000;
-
   constructor(
     private firestore: Firestore,
     private authentication: AuthenticationService,
+    private http: HttpClient,
   ) {}
 
-  getLeaderboard(): Observable<User[]> {
-    return new Observable((observer) => {
-      // Get the users collection
-      const usersCollection = collection(this.firestore, "users");
+  async getLeaderboard(): Promise<UserWithRanking[]> {
+    const observable$ = this.http.get("/leaderboard");
+    const data = (await lastValueFrom(observable$)) as {
+      leaderboard: UserWithRanking[];
+    };
 
-      // Get the users ordered by score
-      const q = query(
-        usersCollection,
-        orderBy("score", "desc"),
-        orderBy("scoreUpdatedAt", "asc"),
-        limit(this.LEADERBOARD_SIZE),
-        where("score", ">", 0),
-      );
-
-      // Subscribe to the users collection
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const leaderboard = querySnapshot.docs.map((doc) =>
-          doc.data(),
-        ) as User[];
-        observer.next(leaderboard);
-      });
-
-      return () => unsubscribe();
-    });
-  }
-
-  async setupLeaderboard(users: User[]): Promise<UserWithRanking[]> {
-    // Get the users with their ranking
-    const leaderboard = users.map((user, index) => ({
-      ...user,
-      ranking: index + 1,
-    }));
-
-    // Get the current user
-    const user = await this.authentication.getCurrentUser();
-    // If the current user is not in the leaderboard
-    if (user && user.score > 0 && !leaderboard.find((u) => u.id === user.id)) {
-      // Get the current user's ranking
-      const ranking = await this.getUserRanking(user);
-      // Add the current user to the leaderboard
-      ranking > this.LEADERBOARD_SIZE && leaderboard.push({ ...user, ranking });
-    }
-
-    // Return the leaderboard
-    return leaderboard;
-  }
-
-  async getUserRanking(user: User): Promise<number> {
-    // Check current user's score
-    if (!user || user.score == 0) return 0;
-
-    // Get all users with a score higher or equal to the current user
-    const usersCollection = collection(this.firestore, "users");
-    const q = query(
-      usersCollection,
-      orderBy("score", "desc"),
-      orderBy("scoreUpdatedAt", "asc"),
-      where("score", ">=", user.score),
-      limit(this.MAX_DOCUMENTS),
-    );
-    const usersSnapshot = await getDocs(q);
-
-    // Return the current user's ranking
-    return usersSnapshot.docs.findIndex((u) => u.id === user.id) + 1;
+    return data.leaderboard;
   }
 
   async getWeeklyContributions(): Promise<{ day: Date; value: number }[]> {

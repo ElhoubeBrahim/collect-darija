@@ -23,11 +23,9 @@ export class LeaderboardComponent {
     // Subscribe to the leaderboard data if the leaderboard is not loaded
     this.leaderboardLoaded$.subscribe((loaded) => {
       if (!loaded) {
-        this.leaderboard.getLeaderboard().subscribe((users) => {
-          this.leaderboard.setupLeaderboard(users).then((leaderboard) => {
-            // Calculate the leaderboard users' rankings
-            this.store.dispatch(setLeaderboard(leaderboard)); // Update the leaderboard (store)
-          });
+        this.leaderboard.getLeaderboard().then((leaderboard) => {
+          // Update the leaderboard (store)
+          this.store.dispatch(setLeaderboard(leaderboard));
         });
       }
     });
