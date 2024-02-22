@@ -1,74 +1,78 @@
-<button mat-dialog-close class="text-center absolute right-1.5 top-1.5">
-  <i class="ri-close-line text-3xl"></i>
-</button>
-<div class="p-7 mt-10">
-  <div>
-    <h3 class="font-bold">Translated At: 16-10-2023 16:40</h3>
-    <h3 class="font-bold">Reviews Count: 30</h3>
-    <div class="flex">
-      <h3 class="font-bold mr-3">Rating:</h3>
-
-      @for (star of [].constructor(fullStars); track $index) {
-        <i class="ri-star-fill"></i>
-      }
-      <i class="ri-star-fill"></i>
-
-      @if (hasHalfStar) {
-        <i class="ri-star-half-line"></i>
-      }
-
-      @for (star of [].constructor(emptyStars); track $index) {
-        <i class="ri-star-line"></i>
-      }
+@if (translation) {
+  <button mat-dialog-close class="text-center absolute right-1.5 top-1.5">
+    <i class="ri-close-line text-3xl"></i>
+  </button>
+  <div class="p-7 mt-10">
+    <div>
+      <h3><b>Translated At</b>: {{ showDate() }}</h3>
+      <!-- <h3 class="font-bold">Reviews Count: 30</h3>
+      <div class="flex">
+        <h3 class="font-bold mr-3">Rating:</h3>
+  
+        @for (star of [].constructor(fullStars); track $index) {
+          <i class="ri-star-fill text-yellow-300"></i>
+        }
+        <i class="ri-star-fill text-yellow-300"></i>
+  
+        @if (hasHalfStar) {
+          <i class="ri-star-half-line text-yellow-300"></i>
+        }
+  
+        @for (star of [].constructor(emptyStars); track $index) {
+          <i class="ri-star-line"></i>
+        }
+      </div> -->
     </div>
-  </div>
-  <div class="w-[450px] lg:w-[900px] py-10 md:py-18">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <div class="shadow-md rounded-md border bg-background relative pb-10">
-        <div
-          class="border-b rounded-t px-8 py-4 flex justify-between items-center bg-white"
-        >
-          <h2 class="font-bold">English</h2>
-          <div class="flex gap-4 items-center">
-            <i class="ri-file-copy-line ri-lg cursor-pointer"></i>
-            <i class="ri-volume-up-line ri-lg cursor-pointer"></i>
+    <div class="w-[450px] lg:w-[900px] py-10 md:py-18">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div class="shadow-md rounded-md border bg-background relative pb-10">
+          <div
+            class="border-b rounded-t px-8 py-4 flex justify-between items-center bg-white"
+          >
+            <h2 class="font-bold">English</h2>
+            <div class="flex gap-4 items-center">
+              <i
+                class="ri-file-copy-line ri-lg cursor-pointer"
+                (click)="copyToClipboard($event, translation.sentence.content)"
+              ></i>
+            </div>
+          </div>
+          <div class="px-8 py-5">
+            <p class="text-justify font-medium">
+              {{ translation.sentence.content }}
+            </p>
+            <span
+              class="absolute bottom-3 right-8 text-xs font-medium text-muted"
+            >
+              {{ translation.sentence.content.length }} characters
+            </span>
           </div>
         </div>
-        <div class="px-8 py-5">
-          <p class="text-justify font-medium">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit Lorem ipsum
-            dolor sit amet
-          </p>
-          <span
-            class="absolute bottom-3 right-8 text-xs font-medium text-muted"
+        <div class="shadow-md rounded-md border bg-background relative pb-10">
+          <div
+            class="border-b rounded-t px-8 py-4 flex justify-between items-center bg-white"
           >
-            characters
-          </span>
-        </div>
-      </div>
-      <div class="shadow-md rounded-md border bg-background relative pb-10">
-        <div
-          class="border-b rounded-t px-8 py-4 flex justify-between items-center bg-white"
-        >
-          <h2 class="font-bold">Darija</h2>
-          <div class="flex gap-4 items-center">
-            <i class="ri-file-copy-line ri-lg cursor-pointer"></i>
-            <i class="ri-volume-up-line ri-lg cursor-pointer"></i>
+            <h2 class="font-bold">Darija</h2>
+            <div class="flex gap-4 items-center">
+              <i
+                class="ri-file-copy-line ri-lg cursor-pointer"
+                (click)="copyToClipboard($event, translation.translation)"
+              ></i>
+            </div>
           </div>
-        </div>
-        <div class="px-8 py-5">
-          <p class="text-justify font-medium">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit Lorem ipsum
-            dolor sit amet
-          </p>
-          <span
-            class="absolute bottom-3 right-8 text-xs font-medium text-muted"
-          >
-            characters
-          </span>
+          <div class="px-8 py-5">
+            <p class="text-justify font-medium">
+              {{ translation.translation }}
+            </p>
+            <span
+              class="absolute bottom-3 right-8 text-xs font-medium text-muted"
+            >
+              {{ translation.translation.length }} characters
+            </span>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-<div></div>
+  <div></div>
+}
