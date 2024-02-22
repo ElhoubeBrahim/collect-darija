@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { onRequest } from "firebase-functions/v2/https";
 
 import * as express from "express";
+import * as cors from "cors";
 import * as admin from "firebase-admin";
 import * as uuid from "uuid";
 import { Timestamp } from "firebase-admin/firestore";
@@ -16,6 +17,7 @@ admin.initializeApp({
 
 // Create an Express app
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use(authorizeRequest);
 
