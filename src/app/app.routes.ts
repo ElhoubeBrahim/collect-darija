@@ -10,18 +10,19 @@ import {
 } from "@angular/fire/auth-guard";
 import { MainComponent } from "./components/main/main.component";
 import { TranslateComponent } from "./pages/translate/translate.component";
+import { NotFoundComponent } from "./pages/not-found/not-found.component";
 
 export const routes: Routes = [
+  {
+    path: "",
+    pathMatch: "full",
+    redirectTo: "/home",
+  },
   {
     path: "",
     component: MainComponent,
     ...canActivate(() => redirectUnauthorizedTo(["login"])),
     children: [
-      {
-        path: "",
-        pathMatch: "full",
-        redirectTo: "home",
-      },
       {
         path: "home",
         component: HomeComponent,
@@ -44,5 +45,9 @@ export const routes: Routes = [
     path: "login",
     component: LoginComponent,
     ...canActivate(() => redirectLoggedInTo(["home"])),
+  },
+  {
+    path: "**",
+    component: NotFoundComponent,
   },
 ];
