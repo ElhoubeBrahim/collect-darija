@@ -4,11 +4,12 @@ import { restOfLeaderboardSelector } from "../../store/leaderboard/leaderboard.s
 import { AsyncPipe, NgClass } from "@angular/common";
 import { User } from "../../models/users.model";
 import { userSelector } from "../../store/authentication/authentication.selector";
+import { NoDataComponent } from "../no-data/no-data.component";
 
 @Component({
   selector: "app-leaderboard-table",
   standalone: true,
-  imports: [AsyncPipe, NgClass],
+  imports: [AsyncPipe, NgClass, NoDataComponent],
   templateUrl: "./leaderboard-table.component.html",
 })
 export class LeaderboardTableComponent {

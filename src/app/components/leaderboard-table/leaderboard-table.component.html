@@ -1,43 +1,48 @@
 @if (users$ | async; as users) {
-  <div class="relative overflow-x-auto rounded-xl border mx-2">
-    <table class="w-full text-left font-bold text-text">
-      <thead class="font-bold text-text uppercase bg-white">
-        <tr>
-          <th scope="col" class="pl-3 py-3">#</th>
-          <th scope="col" class="py-3">User</th>
-          <th scope="col" class="px-6 py-3">Score</th>
-          <th scope="col" class="py-3">Translations</th>
-        </tr>
-      </thead>
-      <tbody class="bg-background border">
-        @for (user of users; track $index) {
-          <tr
-            class="border"
-            [ngClass]="
-              currentUser && currentUser.id === user.id
-                ? 'bg-primary text-white'
-                : ''
-            "
-          >
-            <td class="pl-3 py-4">
-              {{ user.ranking.toString().padStart(3, "0") }}
-            </td>
-            <th scope="row" class="py-4">
-              <img
-                class="w-9 h-9 rounded-full bg-cover object-cover inline-block mr-2"
-                src="{{ user.picture }}"
-                alt=""
-              />
-              {{ user.username }}
-              {{ currentUser && currentUser.id === user.id ? "(You)" : "" }}
-            </th>
-            <td class="px-6 py-4">{{ user.score }}</td>
-            <td class="py-4">{{ user.stats.translations }}</td>
+  @if (users.length > 0) {
+    <div class="relative overflow-x-auto rounded-xl border mx-2">
+      <table class="w-full text-left font-bold text-text">
+        <thead class="font-bold text-text uppercase bg-white">
+          <tr>
+            <th scope="col" class="pl-3 py-3">#</th>
+            <th scope="col" class="py-3">User</th>
+            <th scope="col" class="px-6 py-3">Score</th>
+            <th scope="col" class="py-3">Translations</th>
           </tr>
-        }
-      </tbody>
-    </table>
-  </div>
-} @else {
-  <div class="text-center">No one in the leaderboard yet</div>
+        </thead>
+        <tbody class="bg-background border">
+          @for (user of users; track $index) {
+            <tr
+              class="border"
+              [ngClass]="
+                currentUser && currentUser.id === user.id
+                  ? 'bg-primary text-white'
+                  : ''
+              "
+            >
+              <td class="pl-3 py-4">
+                {{ user.ranking.toString().padStart(3, "0") }}
+              </td>
+              <th scope="row" class="py-4">
+                <img
+                  class="w-9 h-9 rounded-full bg-cover object-cover inline-block mr-2"
+                  src="{{ user.picture }}"
+                  alt=""
+                />
+                {{ user.username }}
+                {{ currentUser && currentUser.id === user.id ? "(You)" : "" }}
+              </th>
+              <td class="px-6 py-4">{{ user.score }}</td>
+              <td class="py-4">{{ user.stats.translations }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <app-no-data
+      message="No one in the leaderboard yet"
+      icon="ri-user-search-line"
+    ></app-no-data>
+  }
 }

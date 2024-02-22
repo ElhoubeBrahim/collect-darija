@@ -1,40 +1,47 @@
-<div class="relative overflow-x-auto rounded-xl border mx-2">
-  <table class="w-full text-left font-bold text-text">
-    <thead class="font-bold text-text uppercase bg-white">
-      <tr>
-        <th scope="col" class="pl-3 py-3">#</th>
-        <th scope="col" class="px-2 py-3">Sentence</th>
-        <th scope="col" class="px-2 py-3">Score</th>
-        <th scope="col" class="px-2 py-3">Reviews</th>
-        <th scope="col" class="px-2 py-3">Rating</th>
-        <th scope="col" class="px-2 py-3"></th>
-      </tr>
-    </thead>
-    <tbody class="bg-background border">
-      @for (translation of history; let i = $index; track i) {
-        <tr class="border">
-          <td class="pl-3 py-4">
-            {{ i + 1 }}
-          </td>
-          <td class="px-2 py-4">
-            <p class="truncate max-w-20 md:max-w-72 lg:max-w-lg">
-              {{ translation.sentence.content }}
-            </p>
-          </td>
-          <td class="px-2 py-4">10</td>
-          <td class="px-2 py-4">-</td>
-          <td class="px-2 py-4">
-            -
-            <!-- 4.5
-            <i class="ri ri-star-fill ms-2"></i> -->
-          </td>
-          <td class="px-2 py-4">
-            <button (click)="openDialog(translation)" class="w-6 h-6">
-              <i class="ri ri-eye-fill text-primary"></i>
-            </button>
-          </td>
+@if (history.length > 0) {
+  <div class="relative overflow-x-auto rounded-xl border mx-2">
+    <table class="w-full text-left font-bold text-text">
+      <thead class="font-bold text-text uppercase bg-white">
+        <tr>
+          <th scope="col" class="pl-3 py-3">#</th>
+          <th scope="col" class="px-2 py-3">Sentence</th>
+          <th scope="col" class="px-2 py-3">Score</th>
+          <th scope="col" class="px-2 py-3">Reviews</th>
+          <th scope="col" class="px-2 py-3">Rating</th>
+          <th scope="col" class="px-2 py-3"></th>
         </tr>
-      }
-    </tbody>
-  </table>
-</div>
+      </thead>
+      <tbody class="bg-background border">
+        @for (translation of history; let i = $index; track i) {
+          <tr class="border">
+            <td class="pl-3 py-4">
+              {{ i + 1 }}
+            </td>
+            <td class="px-2 py-4">
+              <p class="truncate max-w-20 md:max-w-72 lg:max-w-lg">
+                {{ translation.sentence.content }}
+              </p>
+            </td>
+            <td class="px-2 py-4">10</td>
+            <td class="px-2 py-4">-</td>
+            <td class="px-2 py-4">
+              -
+              <!-- 4.5
+              <i class="ri ri-star-fill ms-2"></i> -->
+            </td>
+            <td class="px-2 py-4">
+              <button (click)="openDialog(translation)" class="w-6 h-6">
+                <i class="ri ri-eye-fill text-primary"></i>
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+} @else {
+  <app-no-data
+    message="No contributions yet"
+    icon="ri-history-line"
+  ></app-no-data>
+}

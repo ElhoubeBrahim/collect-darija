@@ -3,11 +3,17 @@ import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
 import { HistoryModalContentComponent } from "../history-modal-content/history-modal-content.component";
 import { Translation } from "../../models/translations.model";
+import { NoDataComponent } from "../no-data/no-data.component";
 
 @Component({
   selector: "app-history-table",
   standalone: true,
-  imports: [MatButtonModule, MatDialogModule, HistoryModalContentComponent],
+  imports: [
+    MatButtonModule,
+    MatDialogModule,
+    HistoryModalContentComponent,
+    NoDataComponent,
+  ],
   templateUrl: "./history-table.component.html",
 })
 export class HistoryTableComponent {

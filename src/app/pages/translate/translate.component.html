@@ -81,6 +81,11 @@
       </button>
     </div>
   </div>
+} @else if (flags.noSentences) {
+  <app-no-data
+    message="No sentences to translate at the moment"
+    icon="ri-font-size-2"
+  ></app-no-data>
 } @else {
   <div class="flex items-center justify-center py-18">
     <div class="text-center text-muted">

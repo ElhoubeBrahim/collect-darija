@@ -2,11 +2,12 @@ import { Component } from "@angular/core";
 import { Sentence } from "../../models/sentences.model";
 import { ToastrService } from "ngx-toastr";
 import { TranslationService } from "../../services/translation.service";
+import { NoDataComponent } from "../../components/no-data/no-data.component";
 
 @Component({
   selector: "app-translate",
   standalone: true,
-  imports: [],
+  imports: [NoDataComponent],
   templateUrl: "./translate.component.html",
 })
 export class TranslateComponent {
@@ -16,6 +17,7 @@ export class TranslateComponent {
   flags = {
     showPlaceholder: true,
     loading: false,
+    noSentences: false,
     TRANSLATION_LIMIT: 1000,
   };
 
@@ -64,9 +66,12 @@ export class TranslateComponent {
   async loadNewSentence() {
     this.initializeTranslationData();
     const sentence = await this.translate.getSentenceToTranslate();
-    sentence
-      ? (this.sentence = sentence)
-      : this.toastr.info("No sentences to translate at the moment.");
+    if (!sentence) {
+      this.flags.noSentences = true;
+      return;
+    }
+
+    this.sentence = sentence;
   }
 
   async submitTranslation() {
