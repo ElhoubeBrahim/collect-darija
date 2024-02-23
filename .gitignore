@@ -49,6 +49,8 @@ environment.*.ts
 .firebase
 *-debug.log
 .runtimeconfig.json
+.firebaserc
+firebase.json
 
 # Firebase export folder
 /data
