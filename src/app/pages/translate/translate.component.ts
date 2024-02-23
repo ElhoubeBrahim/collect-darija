@@ -3,11 +3,12 @@ import { Sentence } from "../../models/sentences.model";
 import { ToastrService } from "ngx-toastr";
 import { TranslationService } from "../../services/translation.service";
 import { NoDataComponent } from "../../components/no-data/no-data.component";
+import { LoadingComponent } from "../../components/loading/loading.component";
 
 @Component({
   selector: "app-translate",
   standalone: true,
-  imports: [NoDataComponent],
+  imports: [NoDataComponent, LoadingComponent],
   templateUrl: "./translate.component.html",
 })
 export class TranslateComponent {

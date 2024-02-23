@@ -1,5 +1,9 @@
 <div class="leaderboard-page">
   <h1 class="text-center font-bold text-[42px] mb-10">Leaderboard</h1>
-  <app-podium></app-podium>
-  <app-leaderboard-table></app-leaderboard-table>
+  @if (!loading) {
+    <app-podium></app-podium>
+    <app-leaderboard-table></app-leaderboard-table>
+  } @else {
+    <app-loading content="Loading leaderboard ..." />
+  }
 </div>
