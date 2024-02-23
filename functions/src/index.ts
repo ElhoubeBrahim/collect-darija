@@ -7,7 +7,12 @@ import * as admin from "firebase-admin";
 import * as uuid from "uuid";
 import { Timestamp } from "firebase-admin/firestore";
 import { FieldValue } from "firebase-admin/firestore";
-import { authorizeRequest, getTopUsers, getUserRanking } from "./helpers";
+import {
+  authorizeRequest,
+  getTopUsers,
+  getUserRanking,
+  isProduction,
+} from "./helpers";
 
 // Initialize the Firebase Admin SDK
 admin.initializeApp({
@@ -17,7 +22,11 @@ admin.initializeApp({
 
 // Create an Express app
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: isProduction() ? "https://collect-darija.web.app" : "*",
+  }),
+);
 app.use(express.json());
 app.use(authorizeRequest);
 

@@ -71,3 +71,5 @@ export const getUserRanking = async (userId: string) => {
   // Return the user's ranking
   return usersQuery.docs.findIndex((u) => u.id === userId) + 1;
 };
+
+export const isProduction = () => process.env.NODE_ENV === "production";
