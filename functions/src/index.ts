@@ -24,7 +24,9 @@ admin.initializeApp({
 const app = express();
 app.use(
   cors({
-    origin: isProduction() ? "https://collect-darija.web.app" : "*",
+    origin: isProduction()
+      ? ["https://darijaai.web.app", "https://darijaai.mlnomads.com"]
+      : "*",
   }),
 );
 app.use(express.json());
