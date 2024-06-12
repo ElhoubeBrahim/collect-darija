@@ -20,6 +20,15 @@ export class TranslationService {
     return data.sentence;
   }
 
+  async getoTranslationToValidate(): Promise<Translation | null> {
+    const observable$ = this.http.get("/translation");
+    const data = (await lastValueFrom(observable$)) as {
+      translation: Translation | null;
+    };
+
+    return data.translation;
+  }
+
   async translateSentence(sentence: Sentence, translation: string) {
     const observable$ = this.http.post("/translate", {
       sentenceId: sentence.id,

@@ -6,7 +6,7 @@ const users = require("./seeders/users.data");
 const sentences = require("./seeders/sentences.data");
 
 // initialization
-const projectId = "collect-darija";
+const projectId = "darijaai";
 process.env["FIRESTORE_EMULATOR_HOST"] = "localhost:8080";
 process.env["FIREBASE_AUTH_EMULATOR_HOST"] = "localhost:9099";
 

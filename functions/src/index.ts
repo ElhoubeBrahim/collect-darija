@@ -139,6 +139,33 @@ app.get("/sentence", async (req: Request, res: Response) => {
   res.json({ sentence });
 });
 
+app.get("/translation", async (req: Request, res: Response) => {
+  // @ts-ignore
+  const user = req.user;
+
+  // Get a random translation
+  const key = uuid.v4();
+  let translationsQuery = await admin
+    .firestore()
+    .collection("translations")
+    .where("id", ">=", key)
+    .limit(1)
+    .get();
+  if (translationsQuery.empty) {
+    // If no translation found, get the first one in the other direction
+    translationsQuery = await admin
+      .firestore()
+      .collection("translations")
+      .where("id", "<", key)
+      .limit(1)
+      .get();
+  }
+
+  // Return the translation
+  const translation = translationsQuery.docs.map((doc) => doc.data())[0];
+  res.json({ translation });
+});
+
 app.get("/history", async (req: Request, res: Response) => {
   // @ts-ignore
   const user = req.user;
