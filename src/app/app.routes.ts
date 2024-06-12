@@ -11,6 +11,7 @@ import {
 import { MainComponent } from "./components/main/main.component";
 import { TranslateComponent } from "./pages/translate/translate.component";
 import { NotFoundComponent } from "./pages/not-found/not-found.component";
+import { ValidateComponent } from "./pages/validate/validate.component";
 
 export const routes: Routes = [
   {
@@ -34,6 +35,10 @@ export const routes: Routes = [
       {
         path: "translate",
         component: TranslateComponent,
+      },
+      {
+        path: "validate",
+        component: ValidateComponent,
       },
       {
         path: "history",

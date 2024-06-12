@@ -18,6 +18,7 @@ export class HeaderComponent {
     links: [
       { icon: "home-7-line", label: "Home", route: "/home" },
       { icon: "translate", label: "Translate", route: "/translate" },
+      { icon: "checkbox-multiple-line", label: "Validate", route: "/validate" },
       { icon: "history-line", label: "History", route: "/history" },
       { icon: "trophy-line", label: "Leaderboard", route: "/leaderboard" },
     ],

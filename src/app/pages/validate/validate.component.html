@@ -1,0 +1,97 @@
+@if (translation) {
+  <div class="lg:w-[900px] xl:w-[1200px] mx-auto py-10 md:py-18">
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="shadow-md rounded-md border bg-background relative pb-10">
+        <div
+          class="border-b rounded-t px-8 py-4 flex justify-between items-center bg-white"
+        >
+          <h2 class="font-bold">English</h2>
+          <div class="flex gap-4 items-center">
+            <i class="ri-volume-up-line ri-lg cursor-pointer"></i>
+          </div>
+        </div>
+        <div class="px-8 py-5">
+          <p class="text-justify font-medium">
+            {{ translation.sentence.content }}
+          </p>
+          <span
+            class="absolute bottom-3 right-8 text-xs font-medium text-muted"
+          >
+            {{ translation.sentence.content.length }} characters
+          </span>
+        </div>
+      </div>
+      <div class="shadow-md rounded-md border bg-background relative pb-10">
+        <div
+          class="border-b rounded-t px-8 py-4 flex justify-between items-center bg-white"
+        >
+          <h2 class="font-bold">Darija</h2>
+          <div class="flex gap-4 items-center">
+            <i class="ri-volume-up-line ri-lg cursor-pointer"></i>
+          </div>
+        </div>
+        <div class="px-8 py-5">
+          <p class="text-justify font-medium">
+            {{ translation.translation }}
+          </p>
+          <span
+            class="absolute bottom-3 right-8 text-xs font-medium text-muted"
+          >
+            {{ translation.translation.length }} characters
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="flex justify-end mt-4 gap-2">
+      <div class="flex">
+        @for (rating of ratings; track $index) {
+          <i
+            (click)="setRating($index + 1)"
+            class="flex flex-col justify-center mr-1"
+            [ngClass]="{
+              'text-yellow-500 hover:text-yellow-500': selectedRating > $index,
+              'text-gray-300 hover:text-yellow-500': selectedRating <= $index
+            }"
+          >
+            <svg
+              class="w-5 h-5 ms-1"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 22 20"
+            >
+              <path
+                d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"
+              />
+            </svg>
+          </i>
+        }
+      </div>
+      <a
+        (click)="loadNewTranslation()"
+        class="inline-flex items-center cursor-pointer text-orange-600 font-medium hover:underline"
+      >
+        Next
+        <svg
+          class="w-4 h-4 ms-2 rtl:rotate-180"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 14 10"
+        >
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M1 5h12m0 0L9 1m4 4L9 9"
+          />
+        </svg>
+      </a>
+    </div>
+  </div>
+} @else if (flags.noTranslations) {
+  <app-no-data message="No Translations" icon="ri-font-size-2"></app-no-data>
+} @else {
+  <app-loading content="Loading Next Translation ..." />
+}
