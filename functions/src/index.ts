@@ -277,4 +277,73 @@ app.post("/translate", async (req: Request, res: Response) => {
   });
 });
 
+app.post("/review", async (req: Request, res: Response) => {
+  // @ts-ignore
+  const user = req.user;
+  const data = req.body;
+
+  // Validate the request
+  if (!data.translationId || !data.rating) {
+    res.status(400).json({ message: "Invalid request" });
+    return;
+  }
+
+  // Get the translation
+  const translationDocRef = admin
+    .firestore()
+    .collection("translations")
+    .doc(data.translationId);
+  const translationDoc = await translationDocRef.get();
+  const translation = translationDoc.data();
+
+  if (!translation) {
+    res.status(404).json({ message: "Translation not found" });
+    return;
+  }
+
+  // Create a new review
+  const review = {
+    id: admin.firestore().collection("reviews").doc().id,
+    userId: user.id,
+    sentence: {
+      id: translation.sentence.id,
+      content: translation.sentence.content,
+    },
+    translation: {
+      id: translationDocRef.id,
+      content: translation.translation,
+      userId: translation.userId,
+    },
+    rating: data.rating,
+    comment: data.comment,
+    reviewedAt: Timestamp.fromDate(new Date()),
+  };
+
+  // Start a Firestore transaction
+  await admin.firestore().runTransaction(async (transaction) => {
+    // Save the review
+    const reviewDocRef = admin.firestore().collection("reviews").doc(review.id);
+    transaction.set(reviewDocRef, review);
+
+    // Update the translation review count and rating
+
+    const currentCount = translation.reviews?.count || 0;
+    const currentRating = translation.reviews?.rating || 0;
+
+    const newCount = currentCount + 1;
+    const updatedRating =
+      (currentRating * currentCount + data.rating) / newCount;
+
+    transaction.update(translationDocRef, {
+      "reviews.count": newCount,
+      "reviews.rating": updatedRating,
+    });
+  });
+
+  res.json({
+    message: "Review saved",
+    translation,
+  });
+});
+
 export const api = onRequest(app);
