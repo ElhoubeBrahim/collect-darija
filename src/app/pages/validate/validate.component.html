@@ -43,52 +43,73 @@
       </div>
     </div>
     <div class="flex justify-end mt-4 gap-2">
-      <div class="flex">
-        @for (rating of ratings; track $index) {
-          <i
-            (click)="setRating($index + 1)"
-            class="flex flex-col justify-center mr-1"
-            [ngClass]="{
-              'text-yellow-500 hover:text-yellow-500': selectedRating > $index,
-              'text-gray-300 hover:text-yellow-500': selectedRating <= $index
-            }"
+      <form
+        class="flex flex-col mb-6 rounded-lg rounded-t-lg border border-gray-200 p-4"
+      >
+        <p class="ms-1 my-3 text-xl font-sans">Add a review</p>
+        <div class="flex my-2">
+          @for (rating of ratings; track $index) {
+            <i
+              (click)="setRating($index + 1)"
+              class="flex flex-col justify-center mr-1"
+              [ngClass]="{
+                'text-yellow-500 hover:text-yellow-500':
+                  selectedRating > $index,
+                'text-gray-300 hover:text-yellow-500': selectedRating <= $index
+              }"
+            >
+              <svg
+                class="w-5 h-5 ms-1"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 22 20"
+              >
+                <path
+                  d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"
+                />
+              </svg>
+            </i>
+          }
+          <p>{{ selectedRating }} out of 5</p>
+        </div>
+        <div
+          class="py-2 px-4 w-72 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200"
+        >
+          <label for="review" class="sr-only">Your Review</label>
+          <input
+            id="review"
+            rows="6"
+            class="px-0 w-full text-sm text-gray-900 border-0 focus:ring-0 focus:outline-none"
+            placeholder="Write a review..."
+            required
+          />
+        </div>
+        <div class="flex justify-end">
+          <button
+            type="submit"
+            (click)="loadNewTranslation()"
+            class="inline-flex items-center cursor-pointer text-orange-600 font-medium hover:underline"
           >
+            Next
             <svg
-              class="w-5 h-5 ms-1"
+              class="w-4 h-4 ms-2 rtl:rotate-180"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 22 20"
+              fill="none"
+              viewBox="0 0 14 10"
             >
               <path
-                d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M1 5h12m0 0L9 1m4 4L9 9"
               />
             </svg>
-            <p class="w-5 text-center">{{ $index + 1 }}</p>
-          </i>
-        }
-      </div>
-      <a
-        (click)="loadNewTranslation()"
-        class="inline-flex items-center cursor-pointer text-orange-600 font-medium hover:underline"
-      >
-        Next
-        <svg
-          class="w-4 h-4 ms-2 rtl:rotate-180"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 14 10"
-        >
-          <path
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M1 5h12m0 0L9 1m4 4L9 9"
-          />
-        </svg>
-      </a>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 } @else if (flags.noTranslations) {
