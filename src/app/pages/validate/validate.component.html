@@ -43,7 +43,7 @@
       </div>
     </div>
     <div class="flex justify-end mt-4 gap-2">
-      <form
+      <div
         class="flex flex-col mb-6 rounded-lg rounded-t-lg border border-gray-200 p-4"
       >
         <p class="ms-1 my-3 text-xl font-sans">Add a review</p>
@@ -79,16 +79,15 @@
           <label for="review" class="sr-only">Your Review</label>
           <input
             id="review"
-            rows="6"
             class="px-0 w-full text-sm text-gray-900 border-0 focus:ring-0 focus:outline-none"
             placeholder="Write a review..."
-            required
+            [(ngModel)]="comment"
           />
         </div>
         <div class="flex justify-end">
           <button
             type="submit"
-            (click)="loadNewTranslation()"
+            (click)="submitReview()"
             class="inline-flex items-center cursor-pointer text-orange-600 font-medium hover:underline"
           >
             Next
@@ -109,7 +108,7 @@
             </svg>
           </button>
         </div>
-      </form>
+      </div>
     </div>
   </div>
 } @else if (flags.noTranslations) {
