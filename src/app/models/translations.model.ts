@@ -9,4 +9,8 @@ export interface Translation {
   };
   translation: string;
   translatedAt: Timestamp;
+  reviews: {
+    count: number;
+    rating: number;
+  };
 }
