@@ -283,7 +283,12 @@ app.post("/review", async (req: Request, res: Response) => {
   const data = req.body;
 
   // Validate the request
-  if (!data.translationId || !data.rating) {
+  if (
+    !data.translationId ||
+    typeof data.rating !== "number" ||
+    data.rating > 5 ||
+    data.rating < 0
+  ) {
     res.status(400).json({ message: "Invalid request" });
     return;
   }
