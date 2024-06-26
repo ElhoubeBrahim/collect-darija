@@ -343,6 +343,12 @@ app.post("/review", async (req: Request, res: Response) => {
       "reviews.count": newCount,
       "reviews.rating": updatedRating,
     });
+
+    // Update user validated translations count
+    const userDoc = admin.firestore().collection("users").doc(user.id);
+    transaction.update(userDoc, {
+      "stats.validatedTranslations": FieldValue.increment(1),
+    });
   });
 
   res.json({
