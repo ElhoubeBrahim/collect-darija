@@ -18,8 +18,8 @@ export class ValidateComponent {
   translation: Translation | null = null;
   ratings = [1, 2, 3, 4, 5];
   selectedRating: number = 0;
-
   flags = {
+    isVisible: false,
     noTranslations: false,
   };
 
@@ -45,10 +45,11 @@ export class ValidateComponent {
   }
 
   async submitReview() {
+    this.flags.isVisible = true;
     if (this.translation) {
       await this.review.submitReview(this.translation, this.selectedRating);
     }
-
+    this.flags.isVisible = false;
     this.toastr.success(
       "Review submitted successfully! Thanks for your contribution.",
     );
