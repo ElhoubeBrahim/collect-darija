@@ -320,7 +320,6 @@ app.post("/review", async (req: Request, res: Response) => {
       userId: translation.userId,
     },
     rating: data.rating,
-    comment: data.comment,
     reviewedAt: Timestamp.fromDate(new Date()),
   };
 

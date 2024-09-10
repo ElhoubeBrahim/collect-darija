@@ -18,7 +18,6 @@ export class ValidateComponent {
   translation: Translation | null = null;
   ratings = [1, 2, 3, 4, 5];
   selectedRating: number = 0;
-  comment: string = "";
 
   flags = {
     noTranslations: false,
@@ -40,7 +39,6 @@ export class ValidateComponent {
     }
     this.translation = transaction;
     this.selectedRating = 0;
-    this.comment = "";
   }
   setRating(rating: number) {
     this.selectedRating = rating;
@@ -48,11 +46,7 @@ export class ValidateComponent {
 
   async submitReview() {
     if (this.translation) {
-      await this.review.submitReview(
-        this.translation,
-        this.selectedRating,
-        this.comment,
-      );
+      await this.review.submitReview(this.translation, this.selectedRating);
     }
 
     this.toastr.success(

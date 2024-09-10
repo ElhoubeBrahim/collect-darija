@@ -9,15 +9,10 @@ import { lastValueFrom } from "rxjs";
 export class ReviewService {
   constructor(private http: HttpClient) {}
 
-  async submitReview(
-    translation: Translation,
-    rating: number,
-    comment: string,
-  ) {
+  async submitReview(translation: Translation, rating: number) {
     const observable$ = this.http.post("/review", {
       translationId: translation.id,
       rating: rating,
-      comment: comment,
     });
     await lastValueFrom(observable$);
   }
