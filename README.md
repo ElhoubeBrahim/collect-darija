@@ -1,27 +1,68 @@
-# CollectDarija
+# Darija AI: Crowdsourcing Moroccan Darija-English Translations
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.1.1.
+Google AI/ML Developer Programs team supported this work by providing Google Cloud Credit. #AISprint
 
-## Development server
+![Darija AI Banner](assets/banner.png)
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## About the Project
 
-## Code scaffolding
+Darija AI is an innovative crowdsourcing platform designed to build a comprehensive Moroccan Darija-English translation dataset. Our goal is to address the challenges in creating high-quality datasets for minority languages, specifically Moroccan Darija, a unique dialect spoken by over 91% of Moroccan citizens.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+**Project Link:** [https://darijaai.mlnomads.com](https://darijaai.mlnomads.com)
 
-## Build
+## Features
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+- **Translation**: Contributors can translate English phrases from the Mozilla Common Voice dataset into Moroccan Darija.
+- **Peer Review**: Users can assess and rate previous translations, ensuring quality and accuracy.
+- **Leaderboard**: A gamified system to recognize top contributors and encourage participation.
+- **Flexible Input**: Support for both Arabic and Latin scripts, with no restrictions on regional dialects.
 
-## Running unit tests
+## Technical Architecture
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+The platform is built on a robust architecture designed to handle large volumes of data efficiently. We used Firebase to handle authentication, data processing, storage, and business logic, ensuring the system's robustness, security, and scalability.
 
-## Running end-to-end tests
+![Technical Architecture](assets/architecture.png)
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+This architecture leverages Firebase's serverless model, allowing for easy scaling and maintenance. The separation of concerns between frontend, backend functions, and data storage provides a modular and flexible system for handling sentence translations and ratings. By utilizing Firebase's integrated services, the platform can efficiently manage user authentication, data processing, and storage, ensuring a smooth and secure experience for contributors engaged in building the Moroccan Darija translation dataset.
 
-## Further help
+## How to Contribute
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+### For Translators
+
+1. Sign up at [https://darijaai.mlnomads.com](https://darijaai.mlnomads.com)
+2. Start translating English phrases into Moroccan Darija
+3. Participate in the peer review process to validate other translations
+
+### For Developers
+
+1. Fork this repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## The Team
+
+![Darija AI Team](assets/team.png)
+
+- [Ahmed Houssam BOUZINE](https://www.linkedin.com/in/ahmed-houssam-bouzine/) - Software Engineer
+- [Tariq EL QESSOUAR](https://www.linkedin.com/in/elqessouartariq/) - Software Engineer
+- [Brahim EL HOUBE](https://brahimelhoube.com/) - Software Engineer, data and cloud computing enthusiast
+- [Taha BOUHSINE](https://www.tahabouhsine.com/) ([@tahabsn](https://hashnode.com/@tahabsn)) - ML/AI Google Developer Expert (Project Advisor)
+
+## Acknowledgments
+
+- Google AI/ML Developer Programs team for providing Google Cloud Credit
+- All our contributors who have helped refine the platform and enhance the dataset
+
+## License
+
+Distributed under the GNU General Public License v3.0. See `LICENSE` for more information.
+
+## Contact
+
+For any queries, please open an issue on this repository.
+
+---
+
+Join us in preserving and advancing Moroccan Darija in the digital age!
