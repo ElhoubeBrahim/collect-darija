@@ -45,7 +45,7 @@ This architecture leverages Firebase's serverless model, allowing for easy scali
 
 ![Darija AI Team](assets/team.png)
 
-- [Ahmed Houssam BOUZINE](https://www.linkedin.com/in/ahmed-houssam-bouzine/) - Software Engineer
+- [Ahmed Houssam BOUZINE](https://ahmedhoussambouzine.com/) - Software Engineer
 - [Tariq EL QESSOUAR](https://www.linkedin.com/in/elqessouartariq/) - Software Engineer
 - [Brahim EL HOUBE](https://brahimelhoube.com/) - Software Engineer, data and cloud computing enthusiast
 - [Taha BOUHSINE](https://www.tahabouhsine.com/) ([@tahabsn](https://hashnode.com/@tahabsn)) - ML/AI Google Developer Expert (Project Advisor)
