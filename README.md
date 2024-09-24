@@ -1,6 +1,4 @@
-# Darija AI: Crowdsourcing Moroccan Darija-English Translations
-
-Google AI/ML Developer Programs team supported this work by providing Google Cloud Credit. #AISprint
+# #AISprint Darija AI: Crowdsourcing Moroccan Darija-English Translations
 
 ![Darija AI Banner](assets/banner.png)
 
@@ -52,7 +50,7 @@ This architecture leverages Firebase's serverless model, allowing for easy scali
 
 ## Acknowledgments
 
-- Google AI/ML Developer Programs team for providing Google Cloud Credit
+- Google AI/ML Developer Programs team for providing Google Cloud Credit for #AISprint
 - All our contributors who have helped refine the platform and enhance the dataset
 
 ## License
